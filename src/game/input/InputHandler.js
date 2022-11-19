@@ -4,8 +4,8 @@ export default class InputHandler {
   // Create a queue of commands to be executed
   commandQueue = []
 
-  // Execute the commands in the queue
-  // Clear the queue
+  // All the input handlers
+  InputHandlers = []
 
   constructor(input) {
     this.input = input
@@ -40,21 +40,33 @@ export default class InputHandler {
    *
    */
   handleMoveInput() {
-    if (this.keys.up.isDown) return this.upKeyComman
-    if (this.keys.down.isDown) return this.downKeyCommand
-    if (this.keys.left.isDown) return this.leftKeyCommand
-    if (this.keys.right.isDown) return this.rightKeyCommand
-    return null
+    // if (this.keys.up.isDown) return this.upKeyComman
+    // if (this.keys.down.isDown) return this.downKeyCommand
+    // if (this.keys.left.isDown) return this.leftKeyCommand
+    // if (this.keys.right.isDown) return this.rightKeyCommand
+    // return null
 
-    // if (this.keys.up.isDown) this.commandQueue.push(this.upKeyCommand)
-    // if (this.keys.down.isDown) this.commandQueue.push(this.downKeyCommand)
-    // if (this.keys.left.isDown) this.commandQueue.push(this.leftKeyCommand)
-    // if (this.keys.right.isDown) this.commandQueue.push(this.rightKeyCommand)
+    if (this.keys.up.isDown) this.commandQueue.push(this.upKeyCommand)
+    if (this.keys.down.isDown) this.commandQueue.push(this.downKeyCommand)
+    if (this.keys.left.isDown) this.commandQueue.push(this.leftKeyCommand)
+    if (this.keys.right.isDown) this.commandQueue.push(this.rightKeyCommand)
   }
 
   handlePointerInput() {
-    if (this.input.activePointer.isDown) return this.pointerDownCommand
+    // if (this.input.activePointer.isDown) return this.pointerDownCommand
+    // return null
+
+    if (this.input.activePointer.isDown) this.commandQueue.push(this.pointerDownCommand)
+  }
+
+  getCommandQueue() {
+    if (this.commandQueue.length > 0) return this.commandQueue
+
     return null
+  }
+
+  clearCommandQueue() {
+    this.commandQueue = []
   }
 
   /** Set the command to be execute when the mouse pointer is down */
