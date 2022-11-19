@@ -31,6 +31,7 @@ const archerConfig = {
   commands: {
     moveCommand: playerConfig.commands.moveCommand,
     attackCommand: function (pointer) {
+      console.log('attack command on archer config')
       const Arrow = require('../weapons/arrow/Arrow').default
       const Bow = require('../weapons/bow/Bow').default
       return {

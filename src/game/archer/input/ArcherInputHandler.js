@@ -13,7 +13,7 @@ export default class Archer extends PlayerInputHandler {
     super.handlePointerInput()
     if (this.input.activePointer.isDown) {
       const pointer = this.input.activePointer
-      return this.pointerDownCommand(pointer)
+      this.commandQueue.push(this.pointerDownCommand(pointer))
     }
   }
 }

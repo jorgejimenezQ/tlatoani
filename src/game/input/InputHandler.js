@@ -18,21 +18,42 @@ export default class InputHandler {
     })
 
     this.downKeyCommand = () => {
-      console.log('down')
+      return {
+        execute: () => {
+          console.log('down key pressed')
+        },
+      }
     }
     this.upKeyCommand = () => {
-      console.log('up')
+      return {
+        execute: () => {
+          console.log('up key pressed')
+        },
+      }
     }
     this.leftKeyCommand = () => {
-      console.log('left')
+      return {
+        execute: () => {
+          console.log('left key pressed')
+        },
+      }
     }
     this.rightKeyCommand = () => {
-      console.log('right')
+      return {
+        execute: () => {
+          console.log('right')
+        },
+      }
     }
 
     //TODO: Figure out how to make this work
     this.pointerDownCommand = () => {
-      console.log('attack')
+      console.log('pointer down')
+      return {
+        execute: () => {
+          console.log('pointer down')
+        },
+      }
     }
   }
 
@@ -40,12 +61,6 @@ export default class InputHandler {
    *
    */
   handleMoveInput() {
-    // if (this.keys.up.isDown) return this.upKeyComman
-    // if (this.keys.down.isDown) return this.downKeyCommand
-    // if (this.keys.left.isDown) return this.leftKeyCommand
-    // if (this.keys.right.isDown) return this.rightKeyCommand
-    // return null
-
     if (this.keys.up.isDown) this.commandQueue.push(this.upKeyCommand)
     if (this.keys.down.isDown) this.commandQueue.push(this.downKeyCommand)
     if (this.keys.left.isDown) this.commandQueue.push(this.leftKeyCommand)
@@ -53,9 +68,6 @@ export default class InputHandler {
   }
 
   handlePointerInput() {
-    // if (this.input.activePointer.isDown) return this.pointerDownCommand
-    // return null
-
     if (this.input.activePointer.isDown) this.commandQueue.push(this.pointerDownCommand)
   }
 
