@@ -105,11 +105,18 @@ export default class BootScene extends Phaser.Scene {
   }
 
   update() {
-    const playerMoveCommand = this.playerInputHandler.handleMoveInput()
-    const playerAttackCommand = this.playerInputHandler.handlePointerInput()
+    this.playerInputHandler.handleMoveInput()
+    this.playerInputHandler.handlePointerInput()
 
-    if (playerAttackCommand) playerAttackCommand.execute(this.player)
-    if (playerMoveCommand) playerMoveCommand.execute(this.player)
+    const commands = this.playerInputHandler.getCommandQueue()
+
+    if (commands.length > 0) {
+      while (commands.length > 0) {
+        const command = commands.shift()
+        command.execute(this.player)
+      }
+    }
+
     this.player.update()
   }
 }

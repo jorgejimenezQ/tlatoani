@@ -60,9 +60,13 @@ export default class InputHandler {
   }
 
   getCommandQueue() {
-    if (this.commandQueue.length > 0) return this.commandQueue
+    let queue = []
+    if (this.commandQueue.length > 0) {
+      queue = this.commandQueue
+      this.clearCommandQueue()
+    }
 
-    return null
+    return queue
   }
 
   clearCommandQueue() {

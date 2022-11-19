@@ -48,19 +48,18 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
   }
 
   update(time, delta) {
-    // Update the character
-
     // Is the character still alive?
     if (this.health <= 0) {
       // TODO: handle the character death
       this.deathEmitter.emit('death')
     }
 
-    if (Math.abs(this.velocity.x) < 0.1 || Math.abs(this.velocity.y) < 0.1) {
-      this.runIdleAnimation()
-    } else {
-      this.runWalkAnimation()
-    }
+    // console.log the magnitude of the character's velocity
+    const { x, y } = this.body.velocity
+    const velocityMagnitude = Math.sqrt(x * x + y * y)
+
+    if (velocityMagnitude === 0) this.runIdleAnimation()
+    else this.runWalkAnimation()
   }
 
   /** This method should be overridden by the child class*/
