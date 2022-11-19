@@ -1,0 +1,307 @@
+{
+    "frames": [
+        {
+            "filename": "weapon_big_hammer",
+            "frame": {
+                "w": 10,
+                "h": 37,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_anime_sword",
+            "frame": {
+                "w": 12,
+                "h": 30,
+                "x": 12,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_duel_sword",
+            "frame": {
+                "w": 9,
+                "h": 30,
+                "x": 25,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_green_magic_staff",
+            "frame": {
+                "w": 8,
+                "h": 30,
+                "x": 35,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_lavish_sword",
+            "frame": {
+                "w": 10,
+                "h": 30,
+                "x": 1,
+                "y": 39
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_red_magic_staff",
+            "frame": {
+                "w": 8,
+                "h": 30,
+                "x": 12,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_spear",
+            "frame": {
+                "w": 6,
+                "h": 30,
+                "x": 21,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_katana",
+            "frame": {
+                "w": 6,
+                "h": 29,
+                "x": 28,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_knight_sword",
+            "frame": {
+                "w": 10,
+                "h": 29,
+                "x": 44,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_bow",
+            "frame": {
+                "w": 7,
+                "h": 25,
+                "x": 44,
+                "y": 31
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_saw_sword",
+            "frame": {
+                "w": 10,
+                "h": 25,
+                "x": 55,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_hammer",
+            "frame": {
+                "w": 10,
+                "h": 24,
+                "x": 55,
+                "y": 27
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_mace",
+            "frame": {
+                "w": 10,
+                "h": 24,
+                "x": 66,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_baton_with_spikes",
+            "frame": {
+                "w": 10,
+                "h": 22,
+                "x": 66,
+                "y": 26
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_golden_sword",
+            "frame": {
+                "w": 10,
+                "h": 22,
+                "x": 66,
+                "y": 49
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_machete",
+            "frame": {
+                "w": 5,
+                "h": 22,
+                "x": 1,
+                "y": 70
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_arrow",
+            "frame": {
+                "w": 7,
+                "h": 21,
+                "x": 35,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_axe",
+            "frame": {
+                "w": 9,
+                "h": 21,
+                "x": 7,
+                "y": 70
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_red_gem_sword",
+            "frame": {
+                "w": 10,
+                "h": 21,
+                "x": 52,
+                "y": 52
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_regular_sword",
+            "frame": {
+                "w": 10,
+                "h": 21,
+                "x": 35,
+                "y": 57
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_rusty_sword",
+            "frame": {
+                "w": 10,
+                "h": 21,
+                "x": 17,
+                "y": 63
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_cleaver",
+            "frame": {
+                "w": 8,
+                "h": 19,
+                "x": 63,
+                "y": 72
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "weapon_knife",
+            "frame": {
+                "w": 6,
+                "h": 13,
+                "x": 28,
+                "y": 62
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

@@ -1,0 +1,52 @@
+{
+    "anims": [
+        {
+            "key": "slime_walk",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "slimes_",
+                    "frame": "slime_walk_f0"
+                },
+                {
+                    "key": "slimes_",
+                    "frame": "slime_walk_f1"
+                },
+                {
+                    "key": "slimes_",
+                    "frame": "slime_walk_f2"
+                },
+                {
+                    "key": "slimes_",
+                    "frame": "slime_walk_f3"
+                }
+            ]
+        },
+        {
+            "key": "slime_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "slimes_",
+                    "frame": "slime_idle_f0"
+                },
+                {
+                    "key": "slimes_",
+                    "frame": "slime_idle_f1"
+                },
+                {
+                    "key": "slimes_",
+                    "frame": "slime_idle_f2"
+                },
+                {
+                    "key": "slimes_",
+                    "frame": "slime_idle_f3"
+                }
+            ]
+        }
+    ]
+}

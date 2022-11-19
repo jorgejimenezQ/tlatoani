@@ -1,12 +1,4 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "format":"json",
-         "target":"..\/..\/scenes\/boot\/assets\/map-1.json"
-        }
-    },
  "height":100,
  "infinite":false,
  "layers":[
@@ -44,7 +36,6 @@
          "encoding":"base64",
          "height":100,
          "id":3,
-         "locked":true,
          "name":"Tile Layer 3",
          "opacity":1,
          "type":"tilelayer",
@@ -63,7 +54,7 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"map_tileset.png",
+         "image":"..\/..\/..\/assets\/mapLayers\/map_tileset.png",
          "imageheight":3712,
          "imagewidth":512,
          "margin":0,

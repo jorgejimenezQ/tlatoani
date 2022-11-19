@@ -1,13 +1,15 @@
-import Character from '../gameCharacters/Character'
+import Character from '../gameCharacter/Character'
 import playerConfig from './player.config'
+import Phaser from 'phaser'
 
 export default class Player extends Character {
   // Static property that holds the player base config
   static config = playerConfig
 
   constructor(config) {
-    config.health = 100
-    super({ ...config })
+    const useConfig = config.useConfig || Player.config
+
+    super({ ...config, ...useConfig })
   }
 
   update() {

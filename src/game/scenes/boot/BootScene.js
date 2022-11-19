@@ -1,9 +1,16 @@
 import Phaser from 'phaser'
-import Player from '../../player/Player'
 
-/** Map */
-import map from '../../assets/mapLayers/map-1.json'
-import mapTileset from '../../assets/mapLayers/map_tileset.png'
+import assets from './bootScene.config'
+
+// Characters
+import Player from '../../player/Player'
+import Archer from '../../archer/Archer'
+import Slime from '../../slime/Slime'
+
+// Items
+import Bow from '../../weapons/bow/Bow'
+import InputHandler from '../../input/InputHandler'
+import ArcherInputHandler from '../../archer/input/ArcherInputHandler'
 
 export default class BootScene extends Phaser.Scene {
   constructor() {
@@ -13,20 +20,41 @@ export default class BootScene extends Phaser.Scene {
 
     // TEST PLAYER
     this.player = null
+
+    // Input handler
+    this.playerInputHandler = null
   }
 
   preload() {
     // Load the map tileset
-    this.load.image('tiles', mapTileset)
-
+    this.load.image('tiles', assets.mapTileset)
     // Load the map
-    this.load.tilemapTiledJSON('map', map)
+    this.load.tilemapTiledJSON('map', assets.mapJson)
 
     // Load player assets using Player.config
-    this.load.atlas('player', Player.config.image, Player.config.atlas)
+    this.load.atlas(Player.config.texture, Player.config.image, Player.config.atlas)
+    this.load.animation(Player.config.animations.key, Player.config.animations.json)
+
+    // Load archer assets using Archer.config
+    this.load.atlas(Archer.config.texture, Archer.config.image, Archer.config.atlas)
+    this.load.animation(Archer.config.animations.key, Archer.config.animations.json)
+
+    // Load slime assets using Slime.config
+    this.load.atlas(Slime.config.texture, Slime.config.image, Slime.config.atlas)
+    this.load.animation(Slime.config.animations.key, Slime.config.animations.json)
+
+    console.log(Slime.config)
+
+    // Load weapon assets using Bow.config
+    this.load.atlas('weapon', Bow.config.image, Bow.config.atlas)
   }
 
   create() {
+    // Handle the input
+    this.playerInputHandler = new ArcherInputHandler(this.input)
+    this.playerInputHandler.setMoveCommand(Archer.config.commands.moveCommand)
+    this.playerInputHandler.setPointerDownCommand(Archer.config.commands.attackCommand)
+
     // Create the map and set the tileset
     this.map = this.make.tilemap({ key: 'map' })
     const tileset = this.map.addTilesetImage('map_tileset', 'tiles', 32, 32, 0, 0)
@@ -38,26 +66,50 @@ export default class BootScene extends Phaser.Scene {
     layer2.setDepth(1)
     layer3.setDepth(2)
 
+    // Set the collision between the player and the map
+    layer1.setCollisionByProperty({ collides: true })
+    layer2.setCollisionByProperty({ collides: true })
+    layer3.setCollisionByProperty({ collides: true })
+
     // Set the collision tiles
     this.matter.world.convertTilemapLayer(layer1)
     this.matter.world.convertTilemapLayer(layer2)
     this.matter.world.convertTilemapLayer(layer3)
 
-    this.player = new Player({
+    // this.player = new Archer({
+    //   scene: this,
+    //   name: 'player one',
+    //   x: 300,
+    //   y: 100,
+    //   texture: Archer.config.texture,
+    //   frame: 'archer_idle_1',
+
+    // })
+
+    this.player = new Slime({
       scene: this,
-      x: 100,
+      name: 'slime',
+      x: 300,
       y: 100,
-      texture: 'player',
-      frame: 'townsfolk_f_idle_1',
+      texture: Slime.config.texture,
+      frame: 'slime_idle_f0',
     })
 
     // Set the camera
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels + 50)
+
     // set the camera to follow the player
     this.cameras.main.startFollow(this.player)
+    this.cameras.main.setZoom(1.5)
+    this.cameras.main.setLerp(0.1, 0.1)
   }
 
   update() {
+    const playerMoveCommand = this.playerInputHandler.handleMoveInput()
+    const playerAttackCommand = this.playerInputHandler.handlePointerInput()
+
+    if (playerAttackCommand) playerAttackCommand.execute(this.player)
+    if (playerMoveCommand) playerMoveCommand.execute(this.player)
     this.player.update()
   }
 }
