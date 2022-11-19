@@ -76,24 +76,23 @@ export default class BootScene extends Phaser.Scene {
     this.matter.world.convertTilemapLayer(layer2)
     this.matter.world.convertTilemapLayer(layer3)
 
-    // this.player = new Archer({
-    //   scene: this,
-    //   name: 'player one',
-    //   x: 300,
-    //   y: 100,
-    //   texture: Archer.config.texture,
-    //   frame: 'archer_idle_1',
-
-    // })
-
-    this.player = new Slime({
+    this.player = new Archer({
       scene: this,
-      name: 'slime',
+      name: 'player one',
       x: 300,
       y: 100,
-      texture: Slime.config.texture,
-      frame: 'slime_idle_f0',
+      texture: Archer.config.texture,
+      frame: 'archer_idle_1',
     })
+
+    // this.player = new Slime({
+    //   scene: this,
+    //   name: 'slime',
+    //   x: 300,
+    //   y: 100,
+    //   texture: Slime.config.texture,
+    //   frame: 'slime_idle_f0',
+    // })
 
     // Set the camera
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels + 50)
