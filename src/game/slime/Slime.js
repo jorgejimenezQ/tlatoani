@@ -6,10 +6,5 @@ export default class Slime extends Player {
   constructor(config) {
     config.useConfig = Slime.config
     super(config)
-
-    this.scene.input.on('pointermove', (pointer) => {
-      if (this.dead) return
-      this.setFlipX(pointer.worldX > this.x)
-    })
   }
 }

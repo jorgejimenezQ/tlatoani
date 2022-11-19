@@ -104,11 +104,21 @@ export default class BootScene extends Phaser.Scene {
   }
 
   update() {
-    const playerMoveCommand = this.playerInputHandler.handleMoveInput()
-    const playerAttackCommand = this.playerInputHandler.handlePointerInput()
+    this.playerInputHandler.handleMoveInput()
+    this.playerInputHandler.handlePointerInput()
 
-    if (playerAttackCommand) playerAttackCommand.execute(this.player)
-    if (playerMoveCommand) playerMoveCommand.execute(this.player)
+    // Archer.config.commands.attackCommand(this.player, this.playerInputHandler.pointer)
+
+    // execute all the player's commands in the queue
+    const commands = this.playerInputHandler.getCommandQueue()
+    if (commands.length > 0) {
+      while (commands.length > 0) {
+        const command = commands.shift()
+        if (!command.execute) continue
+        command.execute(this.player)
+      }
+    }
+
     this.player.update()
   }
 }
