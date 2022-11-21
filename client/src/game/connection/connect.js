@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 const socket = io('http://127.0.0.1:8000')
 const connectionId = uuidv4()
 const connectionEvents = new EventEmitter()
+
 socket.connectionId = connectionId
 socket.on('connect', (data) => {
   console.log('Connected to server')

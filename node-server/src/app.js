@@ -20,6 +20,8 @@ const io = new Server(httpServer, {
 const connections = {}
 const playerTypes = ['archer', 'knight', 'slime', 'player']
 
+// io.use((socket, next) => {
+
 io.on('connection', (socket) => {
   console.log('New client connected')
   socket.on('disconnect', () => {
