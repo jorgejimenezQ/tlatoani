@@ -23,3 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 client/node_modules
+node-server/node_modules
+
+/server

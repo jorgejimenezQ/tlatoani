@@ -16,7 +16,7 @@ const characterTypes = {
 }
 
 const createCharacter = (type, scene, x, y) => {
-  console.log(characterTypes[type])
+  // console.log(characterTypes[type])
   // Input handler
   const inputHandler = new characterTypes[type].inputHandler(scene.input)
 

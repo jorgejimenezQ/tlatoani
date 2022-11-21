@@ -36,6 +36,7 @@ export default class BootScene extends Phaser.Scene {
     // Input handler
     this.playerInputHandler = null
     this.customEvents = new EventEmitter()
+    this.connectionId = null
   }
 
   preload() {
@@ -93,7 +94,13 @@ export default class BootScene extends Phaser.Scene {
     this.cameras.main.setZoom(1.5)
     this.cameras.main.setLerp(0.1, 0.1)
 
-    socket.emit('getPlayer', socket.id)
+    // Let the server know that we want a new player and create it
+    entitiesService.events.on('connected', (connectionId) => {
+      this.connectionId = connectionId
+      console.log('Connected to the server with id: ', connectionId)
+      socket.emit('getPlayer', connectionId)
+    })
+
     entitiesService.events.on('characterChanged', (entity) => {
       // Create the player
       const result = createCharacter(entity.toLowerCase(), this, 300, 100)

@@ -1,12 +1,15 @@
 import io from 'socket.io-client'
 import entitiesService from '../service/entitiesStorage.service'
+import EventEmitter from 'events'
+import { v4 as uuidv4 } from 'uuid'
 
-const socket = io('http://127.0.0.1:5000')
-const connectionId = socket.id
-
+const socket = io('http://127.0.0.1:8000')
+const connectionId = uuidv4()
+const connectionEvents = new EventEmitter()
+socket.connectionId = connectionId
 socket.on('connect', (data) => {
-  const jsonData = JSON.stringify(data)
-  console.log('Connected to server', jsonData)
+  console.log('Connected to server')
+  entitiesService.events.emit('connected', connectionId)
 })
 
 socket.on('count', (data) => {
@@ -15,7 +18,7 @@ socket.on('count', (data) => {
 
 socket.on('player', (data) => {
   console.log('The ' + data + ' was chosen')
-  entitiesService.setCharacter(data)
+  entitiesService.setPlayer(data)
 })
 
 socket.on('playerAdded', (data) => {
@@ -27,5 +30,7 @@ socket.on('updatePlayer', (data) => {
   //   console.log('player: ' + playerData.id + ' updated')
 })
 
-console.log(socket)
 export default socket
+
+//q: How to npm install for dev?
+//a: npm install --save-dev
