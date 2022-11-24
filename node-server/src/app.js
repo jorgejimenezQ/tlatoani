@@ -20,6 +20,7 @@ const io = new Server(httpServer, {
 const players = {}
 // let playerTypes = ['archer', 'knight', 'slime']
 let playerTypes = ['archer', 'knight']
+// let playerTypes = ['archer']
 
 io.use((socket, next) => {
   const { connectionId } = socket.handshake.auth
