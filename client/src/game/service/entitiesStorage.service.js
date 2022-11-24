@@ -1,6 +1,6 @@
 import EventEmitter from 'events'
 
-class EntitiesStorageService {
+export default class EntitiesStorageService {
   player = ''
   events = null
   otherPlayers = []
@@ -23,10 +23,20 @@ class EntitiesStorageService {
     this.otherPlayers.push(player)
   }
 
-  removeOtherPlayer(player) {
-    this.otherPlayers = this.otherPlayers.filter((p) => p.characterId !== player.characterId)
+  removePlayer(player) {
+    let removedPlayer = null
+    this.otherPlayers = this.otherPlayers.filter((p) => {
+      if (p.connectionId === player.connectionId) {
+        removedPlayer = p
+        return false
+      }
+      return true
+    })
+
+    return removedPlayer
+  }
+
+  getOtherPlayer(connectionId) {
+    return this.otherPlayers.find((p) => p.connectionId === connectionId)
   }
 }
-
-const entitiesService = new EntitiesStorageService()
-export default entitiesService

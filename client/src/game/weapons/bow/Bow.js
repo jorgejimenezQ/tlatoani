@@ -10,11 +10,11 @@ export default class Bow extends Item {
   }
 
   update() {
-    this.rotation = Phaser.Math.Angle.Between(
-      this.x,
-      this.y,
-      this.scene.input.activePointer.worldX,
-      this.scene.input.activePointer.worldY
-    )
+    // this.rotation = Phaser.Math.Angle.Between(
+    //   this.x,
+    //   this.y,
+    //   this.scene.input.activePointer.worldX,
+    //   this.scene.input.activePointer.worldY
+    // )
   }
 }

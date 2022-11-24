@@ -8,6 +8,7 @@ export default class Player extends Character {
 
   constructor(config) {
     const useConfig = config.useConfig || Player.config
+    if (config.useConfig) delete config.useConfig
 
     super({ ...config, ...useConfig })
   }

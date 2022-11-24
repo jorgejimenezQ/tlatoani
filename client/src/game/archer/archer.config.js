@@ -2,6 +2,7 @@ import archer_anim from './assets/archer_anim.json'
 import archer_atlas from './assets/archer_atlas.json'
 import archer_png from './assets/archer.png'
 import playerConfig from '../player/player.config'
+import Phaser from 'phaser'
 
 const archerConfig = {
   atlas: archer_atlas,
@@ -29,10 +30,26 @@ const archerConfig = {
     key: 'archer_anim',
     firstFrame: 'archer_idle_1',
   },
+  collisionCallbacks: {
+    ...playerConfig.collisionCallbacks,
+  },
   commands: {
-    moveCommand: playerConfig.commands.moveCommand,
+    ...playerConfig.commands,
+    // moveCommand: playerConfig.commands.moveCommand,
+    weaponCommand: function (pointer) {
+      return {
+        execute: (player) => {
+          player.currentWeapon.bow.rotation = Phaser.Math.Angle.Between(
+            player.x,
+            player.y,
+            player.scene.input.activePointer.worldX,
+            player.scene.input.activePointer.worldY
+          )
+        },
+      }
+    },
     attackCommand: function (pointer) {
-      console.log('attack command on archer config')
+      // console.log('attack command on archer config')
       const Arrow = require('../weapons/arrow/Arrow').default
       const Bow = require('../weapons/bow/Bow').default
       return {

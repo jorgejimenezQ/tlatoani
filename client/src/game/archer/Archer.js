@@ -10,6 +10,7 @@ export default class Archer extends Player {
 
   currentWeapon = null
   carryArrow = null
+  weaponInput = null
 
   constructor(config) {
     super({ ...config, useConfig: Archer.config })
@@ -20,6 +21,13 @@ export default class Archer extends Player {
     this.arrowShot = false
     this.arrow = null
     this.shootingTimeHasPassed = true
+
+    // disconnect event
+    this.events.on('disconnect', () => {
+      this.currentWeapon.bow.destroy()
+      this.carryArrow.destroy()
+      this.currentWeapon = null
+    })
 
     this.addOnCollideInnerStart((data) => {})
 

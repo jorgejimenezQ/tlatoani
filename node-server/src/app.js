@@ -17,42 +17,48 @@ const io = new Server(httpServer, {
 
 /********************************** */
 /** Socket Io Stuff */
-const connections = {}
-const playerTypes = ['archer', 'knight', 'slime', 'player']
+const players = {}
+// let playerTypes = ['archer', 'knight', 'slime']
+let playerTypes = ['archer', 'knight']
 
-// io.use((socket, next) => {
+io.use((socket, next) => {
+  const { connectionId } = socket.handshake.auth
+  if (!connectionId) return next(new Error('invalid connectionId'))
+  socket.connectionId = connectionId
+  players[connectionId] = {}
+  next()
+})
 
 io.on('connection', (socket) => {
-  console.log('New client connected')
   socket.on('disconnect', () => {
-    console.log('user disconnected')
+    socket.broadcast.emit('playerDisconnected', socket.connectionId)
+    delete players[socket.connectionId]
+  })
+
+  socket.on('getPlayer', () => {
+    socket.emit('players', players)
+    // random player type
+    const spawnPoint = Object.keys(players).length
+    const player = playerTypes[Math.floor(Math.random() * playerTypes.length)]
+    players[socket.connectionId] = {
+      connectionId: socket.connectionId,
+      type: player,
+      spawnPoint: spawnPoint,
+    }
+
+    socket.emit('player', players[socket.connectionId])
+    socket.broadcast.emit('playerAdded', players[socket.connectionId])
+  })
+
+  socket.on('playerMoved', (data) => {
+    const playerData = JSON.parse(data)
+    // console.log(playerData)
+    socket.broadcast.emit('updatePlayer', data)
   })
 })
 
-io.on('getPlayer', (connectionId) => {
-  console.log(playerTypes)
-  if (playerTypes.length > 0) {
-    const player = playerTypes.pop()
-    connections[connectionId] = {
-      type: player,
-    }
-
-    io.emit('player', player)
-  }
-})
-
 /********************************** */
 /********************************** */
-
-// Test the server
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-// app.listen(PORT, () => {
-//   console.log(`Server listening on port ${PORT}`)
-// })
-
 httpServer.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)
 })

@@ -35,19 +35,46 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     scene.add.existing(this)
 
     this.bodySetup(config)
+    if (!config.collisionCallbacks)
+      throw new Error('The collision callbacks are not implemented yet')
+    this.addOnCollideInnerStart(config.collisionCallbacks.inner.start)
+    this.addOnCollideInnerEnd(config.collisionCallbacks.inner.end)
+
+    this.addOnCollideOuterStart(config.collisionCallbacks.outer.start)
+    this.addOnCollideOuterEnd(config.collisionCallbacks.outer.end)
+
     this.setFixedRotation()
+    // Make the character not pushable
+
     if (config.offset) this.setOrigin(config.offset.x, config.offset.y)
 
     // A vector to store the character's _position
     this._position = new Phaser.Math.Vector2(this.x, this.y)
 
-    this.scene.input.on('pointermove', (pointer) => {
-      if (this.dead) return
-      this.setFlipX(pointer.worldX < this.x)
+    // The last updates position
+    this.lastPosition = new Phaser.Math.Vector2(this.x, this.y)
+    this.moved = false
+    this.lastFlipX = this.flipX
+    this.flipped = false
+
+    // Connection stuff
+    this.connectionId = config.connectionId || null
+    this.disconnected = false
+    this.events.on('disconnect', () => {
+      this.disconnected = true
+      console.log('Character disconnected')
     })
   }
 
   update(time, delta) {
+    if (this.lastPosition.x == this.x && this.lastPosition.y == this.y) this.moved = false
+    else this.moved = true
+    if (this.flipX == this.lastFlipX) this.flipped = false
+    else this.flipped = true
+
+    this.lastFlipX = this.flipX
+    this.lastPosition.set(this.x, this.y)
+
     // Is the character still alive?
     //TODO: We should probably have a death animation.
     // Should we kill the character here? or in the game scene?
@@ -119,10 +146,17 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
 
       const compoundBody = Body.create({
         parts: [this.characterSensor, this.characterCollider],
+        frictionStatic: 0,
+        frictionAir: 0.02,
       })
 
       this.setExistingBody(compoundBody)
     }
+  }
+
+  /** Call to run the disconnect command */
+  disconnect() {
+    this.events.emit('disconnect')
   }
 
   /** Add collision event callbacks */

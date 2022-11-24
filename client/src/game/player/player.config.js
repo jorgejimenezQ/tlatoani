@@ -23,7 +23,34 @@ const playerConfig = {
     walk: 'female_walk',
     key: 'female_anim',
   },
+  collisionCallbacks: {
+    outer: {
+      start: (data) => {
+        const { gameObjectA, gameObjectB } = data
+        if (gameObjectA.type === 'player' && gameObjectB.type === 'player') return
+      },
+      end: (data) => {},
+    },
+    inner: {
+      start: (data) => {
+        const { bodyB, gameObjectA, gameObjectB } = data
+
+        if (!bodyB.isSensor && gameObjectA.type === 'player' && gameObjectB.type === 'player')
+          return
+        // console.log('inner: ', data)
+      },
+      end: (data) => {},
+    },
+  },
   commands: {
+    flipX: function (pointer) {
+      return {
+        execute: (player) => {
+          if (player.dead) return
+          player.setFlipX(pointer.worldX < player.x)
+        },
+      }
+    },
     moveCommand: function (velocity) {
       return {
         execute: (player) => {

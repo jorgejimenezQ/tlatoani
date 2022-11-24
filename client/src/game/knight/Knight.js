@@ -8,6 +8,12 @@ export default class Knight extends Player {
     config.useConfig = Knight.config
     super(config)
 
+    // disconnect event
+    this.events.on('disconnect', () => {
+      this.sword.destroy()
+      this.sword = null
+    })
+
     this.setSword(new AnimeSword({ scene: this.scene, x: this.x, y: this.y }))
   }
 

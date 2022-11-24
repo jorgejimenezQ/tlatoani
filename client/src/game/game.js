@@ -4,13 +4,11 @@ import Phaser from 'phaser'
 import matterPlugin from 'phaser-matter-collision-plugin'
 import BootScene from './scenes/boot/BootScene'
 
-import socket from './connection/connect'
-
 const Game = () => {
   const config = {
     type: Phaser.AUTO,
-    width: 400,
-    height: 300,
+    width: 600,
+    height: 350,
     parent: 'game-content',
     backgroundColor: '#000000',
     scene: [BootScene],
@@ -23,7 +21,7 @@ const Game = () => {
         gravity: {
           y: 0,
         },
-        debug: true,
+        debug: false,
       },
     },
     plugins: {

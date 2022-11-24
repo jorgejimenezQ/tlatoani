@@ -18,18 +18,15 @@ const knightConfig = {
     key: 'knight_anim',
     firstFrame: 'knight_f_idle_anim_f0',
   },
+  collisionCallbacks: {
+    ...playerConfig.collisionCallbacks,
+  },
   commands: {
-    moveCommand: playerConfig.commands.moveCommand,
+    ...playerConfig.commands,
+    // moveCommand: playerConfig.commands.moveCommand,
     attackCommand: function (pointer) {
       return {
         execute: (player) => {
-          // console.log(player.sword.rotation)
-          // console.log(Phaser.Math.RadToDeg(player.sword.rotation))
-          // // player.sword.rotation += Phase.Math. player.sword.rotationSpeed
-          // player.sword.rotation += Phaser.Math.DegToRad(player.sword.rotationSpeed)
-          // if (player.sword.rotation > Phaser.Math.DegToRad(250)) {
-          //   player.sword.rotation = 0
-          // }
           player.sword.setSwing(true)
         },
       }

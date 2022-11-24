@@ -85,6 +85,15 @@ export default class InputHandler {
     this.commandQueue = []
   }
 
+  /** Set the command to execute when the mouse is moved */
+  setMouseMoveInput(command) {
+    if (!command) throw new Error('The command passed in cannot be null')
+
+    this.input.on('pointermove', (pointer) => {
+      this.commandQueue.push(command(pointer))
+    })
+  }
+
   /** Set the command to be execute when the mouse pointer is down */
   setCommand(command) {}
 

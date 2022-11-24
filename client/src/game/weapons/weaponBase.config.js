@@ -8,11 +8,11 @@ const baseWeaponConfig = {
   sensorSize: 1,
   collisionSize: null,
   scale: 0.8,
-  speed: 2,
+  speed: 3,
 
   fixedRotation: true,
   damage: 1,
-  depth: 1,
+  depth: 2,
   rotation: -90,
   originOffset: { x: 1, y: 1 },
   // offset: {
