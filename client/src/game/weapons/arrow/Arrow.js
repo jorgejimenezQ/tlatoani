@@ -9,6 +9,7 @@ export default class Arrow extends Item {
     super({ ...config, ...useConfig })
 
     // Get the direction vector of the mouse pointer
+    this.mousePosition = { x: config.mouseX, y: config.mouseY }
     this.speed = useConfig.speed
     const { mouseX, mouseY } = config
     this.direction = new Phaser.Math.Vector2(mouseX - this.x, mouseY - this.y)

@@ -161,9 +161,8 @@ export default class BootScene extends Phaser.Scene {
     })
 
     // If the player has moved send the new position to the server
-    if (this.player.moved) {
-      // console.log('Player moved. Emitting position')
-
+    // if (this.player.moved) {
+    if (true) {
       // Send data to the server
       const playerData = JSON.stringify({
         connectionId: this.player.connectionId,
@@ -172,6 +171,8 @@ export default class BootScene extends Phaser.Scene {
         rotation: this.player.rotation,
         flipX: this.player.flipX,
         health: this.player.health,
+        arrowShot: this.player.arrowShot || false,
+        arrow: this.player.arrow ? this.player.arrow.mousePosition : null,
       })
 
       this.socket.emit('playerMoved', playerData)
@@ -200,12 +201,23 @@ export default class BootScene extends Phaser.Scene {
     // console.log('player updated broadcasted', data)
     data = JSON.parse(data)
 
-    console.log(data.velocity.x, data.velocity.y)
+    // console.log(data.velocity.x, data.velocity.y)
     const player = this.entitiesService.getOtherPlayer(data.connectionId)
     if (!player) return
+
+    if (data.arrowShot && !player.arrowShot) {
+      Archer.config.commands
+        .attackCommand({ worldX: data.arrow.x, worldY: data.arrow.y })
+        .execute(player)
+    }
+
+    if (player.name === 'archer') {
+      //TODO: update the bow and arrow direction
+    }
 
     player.setVelocity(data.velocity.x, data.velocity.y)
     player.setPosition(data.position.x, data.position.y)
     player.setFlipX(data.flipX)
+    // player.update()
   }
 }
