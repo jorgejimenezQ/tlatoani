@@ -2,9 +2,20 @@ import InputHandler from '../../input/InputHandler'
 import Phaser from 'phaser'
 
 export default class PlayerInputHandler extends InputHandler {
+  static constants = {
+    ...InputHandler.constants,
+    MOVE_INPUT: 'MOVE_INPUT',
+    //TODO: ATTACK_COMMAND: 'ATTACK_COMMAND',
+  }
+
   constructor(input) {
     super(input)
 
+    this.keyMaps = {
+      ...this.keyMaps,
+      MOVE_INPUT: this.setMoveCommand.bind(this),
+      //TODO: ATTACK_COMMAND: this.setPointerDownCommand,
+    }
     this.moveCommand = null
   }
 

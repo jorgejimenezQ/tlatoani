@@ -51,7 +51,7 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('playerAdded', players[socket.connectionId])
   })
 
-  socket.on('playerMoved', (data) => {
+  socket.on('playerData', (data) => {
     const playerData = JSON.parse(data)
     // console.log(playerData)
     socket.broadcast.emit('updatePlayer', data)

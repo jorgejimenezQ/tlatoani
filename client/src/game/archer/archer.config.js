@@ -3,6 +3,9 @@ import archer_atlas from './assets/archer_atlas.json'
 import archer_png from './assets/archer.png'
 import playerConfig from '../player/player.config'
 import Phaser from 'phaser'
+import PlayerInputHandler from '../player/input/PlayerInputHandler'
+import StreamInputHandler from '../input/StreamInputHandler'
+import ArcherStreamInputHandler from './input/ArcherStreamInputHandler'
 
 const archerConfig = {
   atlas: archer_atlas,
@@ -33,12 +36,35 @@ const archerConfig = {
   collisionCallbacks: {
     ...playerConfig.collisionCallbacks,
   },
+  streamCommandMaps: {
+    ...playerConfig.streamCommandMaps,
+    attackCommand: StreamInputHandler.constants.ATTACK_INPUT,
+    rotateWeaponCommand: ArcherStreamInputHandler.constants.ROTATE_WEAPON_INPUT,
+  },
+  streamCommands: {
+    ...playerConfig.streamCommands,
+    rotateWeaponCommand: function (rotation) {
+      return {
+        execute: (archer) => {
+          archer.currentWeapon.bow.rotation = rotation
+          // archer.currentWeapon.rotation = rotation
+        },
+      }
+    },
+  },
+  commandMaps: {
+    ...playerConfig.commandMaps,
+    weaponCommand: PlayerInputHandler.constants.MOUSE_MOVE,
+    attackCommand: PlayerInputHandler.constants.POINTER_DOWN,
+  },
+
   commands: {
     ...playerConfig.commands,
     // moveCommand: playerConfig.commands.moveCommand,
     weaponCommand: function (pointer) {
       return {
         execute: (player) => {
+          // console.log('weaponCommand', pointer)
           player.currentWeapon.bow.rotation = Phaser.Math.Angle.Between(
             player.x,
             player.y,
@@ -95,5 +121,7 @@ const archerConfig = {
     },
   },
 }
+
+archerConfig.streamCommands.attackCommand = archerConfig.commands.attackCommand
 
 export default archerConfig

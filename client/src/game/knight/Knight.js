@@ -12,6 +12,7 @@ export default class Knight extends Player {
     this.events.on('disconnect', () => {
       this.sword.destroy()
       this.sword = null
+      this.disconnected = true
     })
 
     this.setSword(new AnimeSword({ scene: this.scene, x: this.x, y: this.y }))
@@ -30,5 +31,9 @@ export default class Knight extends Player {
     this.sword.setFlipX(!this.flipX)
     this.sword.setPosition(this.x, this.y)
     this.sword.update()
+  }
+
+  attacking() {
+    return this.sword.swinging
   }
 }

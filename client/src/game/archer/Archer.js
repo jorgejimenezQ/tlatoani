@@ -23,11 +23,16 @@ export default class Archer extends Player {
     this.shootingTimeHasPassed = true
 
     // disconnect event
-    this.events.on('disconnect', () => {
-      this.currentWeapon.bow.destroy()
-      this.carryArrow.destroy()
-      this.currentWeapon = null
-    })
+    this.events.on(
+      'disconnect',
+      () => {
+        this.currentWeapon.bow.destroy()
+        this.carryArrow.destroy()
+        this.currentWeapon = null
+        this.disconnected = true
+      },
+      this
+    )
 
     this.addOnCollideInnerStart((data) => {})
 

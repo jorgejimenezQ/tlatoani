@@ -28,6 +28,7 @@ export default class Arrow extends Item {
     })
 
     this.addOnCollideOuterStart((data) => {
+      if (data.bodyB.isSensor) return
       if (data.gameObjectB.type == 'player') return
       if (data.gameObjectB.type == 'weapon') return
 

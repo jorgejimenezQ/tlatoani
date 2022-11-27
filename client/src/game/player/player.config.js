@@ -1,6 +1,8 @@
 import female_atlas from './assets/female_atlas.json'
 import female_png from './assets/female.png'
 import female_animJson from './assets/female_anim.json'
+import PlayerInputHandler from './input/PlayerInputHandler'
+import StreamInputHandler from '../input/StreamInputHandler'
 
 const playerConfig = {
   atlas: female_atlas,
@@ -41,6 +43,30 @@ const playerConfig = {
       },
       end: (data) => {},
     },
+  },
+  streamCommandMaps: {
+    moveCommand: StreamInputHandler.constants.MOVE_INPUT,
+    flipX: StreamInputHandler.constants.FLIP_INPUT,
+  },
+  streamCommands: {
+    flipX: function (flipped) {
+      return {
+        execute: (player) => {
+          player.flipX = flipped
+        },
+      }
+    },
+    moveCommand: function ({ x, y }) {
+      return {
+        execute: (player) => {
+          player.setPosition(x, y)
+        },
+      }
+    },
+  },
+  commandMaps: {
+    flipX: PlayerInputHandler.constants.MOUSE_MOVE,
+    moveCommand: PlayerInputHandler.constants.MOVE_INPUT,
   },
   commands: {
     flipX: function (pointer) {

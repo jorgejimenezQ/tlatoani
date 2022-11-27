@@ -16,4 +16,13 @@ export default class Player extends Character {
   update() {
     super.update()
   }
+
+  /**
+   * Is the player currently attacking?
+   *
+   * @returns {boolean}
+   */
+  attacking() {
+    return false
+  }
 }

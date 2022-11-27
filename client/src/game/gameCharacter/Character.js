@@ -64,6 +64,9 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
       this.disconnected = true
       console.log('Character disconnected')
     })
+
+    // Expose the character's configuration
+    this.config = config
   }
 
   update(time, delta) {

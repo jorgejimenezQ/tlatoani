@@ -9,7 +9,7 @@ import Slime from '../../slime/Slime'
 import Knight from '../../knight/Knight'
 
 // Character Factory
-import { createCharacter, createInputHandler } from '../../factory/factory'
+import { createCharacter, createInputHandler, createStreamedInput } from '../../factory/factory'
 
 // Items
 import Bow from '../../weapons/bow/Bow'
@@ -18,6 +18,8 @@ import Bow from '../../weapons/bow/Bow'
 // import socket from '../../connection/connect'
 import EntitiesService from '../../service/entitiesStorage.service'
 import SocketConnection from '../../connection/connect'
+import Enemy from '../../enemies/Enemy'
+import InputHandler from '../../input/InputHandler'
 
 export default class BootScene extends Phaser.Scene {
   constructor() {
@@ -33,6 +35,7 @@ export default class BootScene extends Phaser.Scene {
     this.socketConnection.connect()
     this.socket = this.socketConnection.socket
     this.entitiesService = new EntitiesService()
+    this.playerReady = false
   }
 
   preload() {
@@ -56,6 +59,10 @@ export default class BootScene extends Phaser.Scene {
     // Load knight assets using Knight.config
     this.load.atlas(Knight.config.texture, Knight.config.image, Knight.config.atlas)
     this.load.animation(Knight.config.animations.key, Knight.config.animations.json)
+
+    // Load enemy assets using Enemy.config
+    this.load.atlas(Enemy.config.texture, Enemy.config.image, Enemy.config.atlas)
+    this.load.animation(Enemy.config.animations.key, Enemy.config.animations.json)
 
     // Load weapon assets using Bow.config
     this.load.atlas('weapon', Bow.config.image, Bow.config.atlas)
@@ -86,6 +93,8 @@ export default class BootScene extends Phaser.Scene {
 
     // Set the spawn points
     this.spawnPoints = this.map.getObjectLayer('Spawn Points').objects
+    this.enemySpawnPoints = this.map.getObjectLayer('Enemy Spawn Points').objects
+    console.log(this.spawnPoints)
 
     // Set the camera
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels + 50)
@@ -94,9 +103,16 @@ export default class BootScene extends Phaser.Scene {
     this.cameras.main.setZoom(1.5)
     this.cameras.main.setLerp(0.1, 0.1)
 
-    this.socket.on('player', (data) => {
-      // console.log('Player connected', data)
+    // Create an enemy
+    const enemy = createCharacter(
+      'enemy',
+      this,
+      this.enemySpawnPoints[0].x,
+      this.enemySpawnPoints[0].y
+    )
+    this.entitiesService.addEnemy({ enemy, inputHandler: null })
 
+    this.socket.on('player', (data) => {
       const spawnPoint = this.spawnPoints[data.spawnPoint]
 
       const player = createCharacter(data.type, this, spawnPoint.x, spawnPoint.y)
@@ -105,14 +121,18 @@ export default class BootScene extends Phaser.Scene {
       this.playerInputHandler = input
       this.player = player
       this.player.connectionId = data.connectionId
-      this.entitiesService.setPlayer(this.player)
+      // this.entitiesService.setPlayer(this.player)
 
       // Set the camera to follow the player
       this.cameras.main.startFollow(this.player)
+
+      // Set the player ready
+      this.playerReady = true
     })
 
+    /** Listen for the server  */
+
     this.socket.on('players', (data) => {
-      // console.log('Players connected', data)
       const keys = Object.keys(data)
       keys.forEach((key) => {
         if (!data[key].spawnPoint) return
@@ -126,7 +146,8 @@ export default class BootScene extends Phaser.Scene {
   }
 
   update() {
-    if (!this.player) return
+    // if (this.pause) return
+    if (!this.player || !this.playerReady) return
     this.playerInputHandler.handleMoveInput()
     this.playerInputHandler.handlePointerInput()
 
@@ -137,22 +158,32 @@ export default class BootScene extends Phaser.Scene {
         const command = commands.shift()
         if (!command.execute) continue
         command.execute(this.player)
-        // console.log(JSON.stringify(this.player))
       }
     }
 
     this.player.update()
+    this.sendPlayerData()
 
     // Update the other players
-    this.entitiesService.otherPlayers.forEach((player) => {
+    this.entitiesService.otherPlayers.forEach(({ player, inputHandler }) => {
+      //TODO: Create a handler and command for disconnected
       if (player.disconnected) {
-        // console.log(player)
-        player.disconnect()
         player.destroy()
         this.entitiesService.removePlayer(player)
         return
       }
 
+      // Get the oldest command from the queue
+      const streamCommands = inputHandler.getCommandQueue()
+      if (streamCommands.length > 0) {
+        while (streamCommands.length > 0) {
+          const command = streamCommands.shift()
+          if (!command.execute) continue
+          command.execute(player)
+        }
+      }
+
+      // Update the player
       player.update()
 
       if (player.name === 'archer' && player.arrowShot) {
@@ -160,30 +191,35 @@ export default class BootScene extends Phaser.Scene {
       }
     })
 
+    // Update the enemies
+    this.entitiesService.enemies.forEach(({ enemy, inputHandler }) => {
+      enemy.update()
+    })
+  }
+
+  sendPlayerData() {
     // If the player has moved send the new position to the server
     // if (this.player.moved) {
-    if (true) {
-      // Send data to the server
-      const playerData = JSON.stringify({
-        connectionId: this.player.connectionId,
-        velocity: this.player.velocity,
-        position: this.player.position,
-        rotation: this.player.rotation,
-        flipX: this.player.flipX,
-        health: this.player.health,
-        arrowShot: this.player.arrowShot || false,
-        arrow: this.player.arrow ? this.player.arrow.mousePosition : null,
-      })
+    // Send data to the server
+    const playerData = JSON.stringify({
+      connectionId: this.player.connectionId,
+      velocity: this.player.velocity,
+      position: this.player.position,
+      attacking: this.player.attacking() || null,
+      rotation: this.player.rotation,
+      flipX: this.player.flipX,
+      health: this.player.health,
+      arrowShot: this.player.arrowShot || false,
+      arrow: this.player.arrow ? this.player.arrow.mousePosition : null,
+      weaponRotation: this.player.name === 'archer' ? this.player.currentWeapon.bow.rotation : null,
+    })
 
-      this.socket.emit('playerMoved', playerData)
-    }
+    this.socket.emit('playerData', playerData)
   }
 
   removePlayer(data) {
-    // console.log('Player disconnected', data)
-    // const removedPlayer = this.entitiesService.removePlayer(data)
-    const player = this.entitiesService.getOtherPlayer(data)
-    player.disconnected = true
+    const { player, inputHandler } = this.entitiesService.getOtherPlayer(data)
+    player.disconnect()
   }
 
   addPlayer(data) {
@@ -192,32 +228,30 @@ export default class BootScene extends Phaser.Scene {
     const spawnPoint = this.spawnPoints[data.spawnPoint]
     const player = createCharacter(data.type, this, spawnPoint.x, spawnPoint.y)
     player.connectionId = data.connectionId
-    this.entitiesService.addOtherPlayer(player)
-    // console.log(this.entitiesService.otherPlayers)
+
+    // Create the streamed input handler for this player
+    const input = createStreamedInput(data.type)
+    this.entitiesService.addOtherPlayer(player, input)
+
     return player
   }
 
   updatePlayer(data) {
-    // console.log('player updated broadcasted', data)
     data = JSON.parse(data)
+    const { player, inputHandler } = this.entitiesService.getOtherPlayer(data.connectionId)
 
-    // console.log(data.velocity.x, data.velocity.y)
-    const player = this.entitiesService.getOtherPlayer(data.connectionId)
-    if (!player) return
+    inputHandler.attacking = data.attacking
+    inputHandler.position = data.position
+    inputHandler.flipped = data.flipX
 
-    if (data.arrowShot && !player.arrowShot) {
-      Archer.config.commands
-        .attackCommand({ worldX: data.arrow.x, worldY: data.arrow.y })
-        .execute(player)
-    }
+    inputHandler.arrowShot = data.arrowShot
+    inputHandler.arrow = data.arrow
+    inputHandler.weaponRotation = data.weaponRotation
 
-    if (player.name === 'archer') {
-      //TODO: update the bow and arrow direction
-    }
-
-    player.setVelocity(data.velocity.x, data.velocity.y)
-    player.setPosition(data.position.x, data.position.y)
-    player.setFlipX(data.flipX)
-    // player.update()
+    // Update the input handler
+    if (inputHandler.handleAttack) inputHandler.handleAttack()
+    if (inputHandler.handleMove) inputHandler.handleMove()
+    if (inputHandler.handleFlipX) inputHandler.handleFlipX()
+    if (inputHandler.handleRotateWeapon) inputHandler.handleRotateWeapon()
   }
 }

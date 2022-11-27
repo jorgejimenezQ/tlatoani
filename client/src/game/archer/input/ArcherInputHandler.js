@@ -1,6 +1,11 @@
 import PlayerInputHandler from '../../player/input/PlayerInputHandler'
 
 export default class Archer extends PlayerInputHandler {
+  // static config = {
+  //   ...PlayerInputHandler.constants,
+  //   POINTER_INPUT: 'POINTER_INPUT',
+  // }
+
   constructor(input) {
     super(input)
   }
