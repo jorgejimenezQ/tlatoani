@@ -83,4 +83,8 @@ export default class EntitiesStorageService {
 
     return removedEnemy
   }
+
+  getEnemy(enemyId) {
+    return this.enemies.find((e) => e.enemy.connectionId === enemyId)
+  }
 }

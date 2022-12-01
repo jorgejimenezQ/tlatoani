@@ -10,6 +10,7 @@ import ArcherInputHandler from '../archer/input/ArcherInputHandler'
 import PlayerInputHandler from '../player/input/PlayerInputHandler'
 import StreamInputHandler from '../input/StreamInputHandler'
 import ArcherStreamInputHandler from '../archer/input/ArcherStreamInputHandler'
+import EnemyInputHandler from '../enemies/input/EnemyInput'
 
 const characterTypes = {
   player: { class: Player, config: Player.config, inputHandler: PlayerInputHandler },
@@ -24,7 +25,7 @@ const characterTypes = {
   enemy: {
     class: Enemy,
     config: Enemy.config,
-    inputHandler: null,
+    inputHandler: EnemyInputHandler,
   },
 }
 

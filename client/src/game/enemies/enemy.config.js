@@ -1,6 +1,8 @@
 import big_zombie_atlas from './assets/big_zombie_atlas.json'
 import big_zombie_animJson from './assets/big_zombie_anim.json'
 import big_zombie_png from './assets/big_zombie.png'
+import EnemyInputHandler from './input/EnemyInput'
+import Phaser from 'phaser'
 
 const enemyConfig = {
   atlas: big_zombie_atlas,
@@ -11,7 +13,7 @@ const enemyConfig = {
   sensorSize: 100,
   collisionSize: 12,
   attack: 1,
-  moveSpeed: 2,
+  moveSpeed: 1,
   dropItems: [{ item: '', itemID: '', itemAssets: '' }],
   baseWeapon: {},
   animations: {
@@ -32,7 +34,7 @@ const enemyConfig = {
         if (data.bodyB.isSensor) return
 
         // Set the enemy as the target
-        enemy.targets = other
+        enemy.addTarget(other)
       },
       end: (data) => {
         if (!data.gameObjectA || !data.gameObjectB) return
@@ -46,7 +48,7 @@ const enemyConfig = {
         if (data.bodyB.isSensor) return
 
         // Remove the target
-        enemy.removeTarget(other)
+        // enemy.removeTarget(other)
       },
     },
     inner: {
@@ -54,11 +56,24 @@ const enemyConfig = {
       end: (data) => {},
     },
   },
+  commandMaps: {
+    moveCommand: EnemyInputHandler.constants.MOVE_INPUT,
+    attackCommand: EnemyInputHandler.constants.ATTACK_INPUT,
+    flipX: EnemyInputHandler.constants.FLIP_X,
+  },
   commands: {
     flipX: function (flipped) {
       return {
         execute: (enemy) => {
           enemy.flipX = flipped
+        },
+      }
+    },
+    moveCommand: function (target) {
+      return {
+        execute: (enemy) => {
+          if (enemy.dead) return
+          enemy.currentTarget = target
         },
       }
     },

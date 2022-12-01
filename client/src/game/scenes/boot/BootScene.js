@@ -1,3 +1,4 @@
+/** @type {import{}} */
 import Phaser from 'phaser'
 
 import assets from './bootScene.config'
@@ -36,6 +37,7 @@ export default class BootScene extends Phaser.Scene {
     this.socket = this.socketConnection.socket
     this.entitiesService = new EntitiesService()
     this.playerReady = false
+    this.triggerPoints = null
   }
 
   preload() {
@@ -91,11 +93,6 @@ export default class BootScene extends Phaser.Scene {
     this.matter.world.convertTilemapLayer(layer2)
     this.matter.world.convertTilemapLayer(layer3)
 
-    // Set the spawn points
-    this.spawnPoints = this.map.getObjectLayer('Spawn Points').objects
-    this.enemySpawnPoints = this.map.getObjectLayer('Enemy Spawn Points').objects
-    console.log(this.spawnPoints)
-
     // Set the camera
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels + 50)
 
@@ -103,14 +100,20 @@ export default class BootScene extends Phaser.Scene {
     this.cameras.main.setZoom(1.5)
     this.cameras.main.setLerp(0.1, 0.1)
 
-    // Create an enemy
-    const enemy = createCharacter(
-      'enemy',
-      this,
-      this.enemySpawnPoints[0].x,
-      this.enemySpawnPoints[0].y
-    )
-    this.entitiesService.addEnemy({ enemy, inputHandler: null })
+    // Set the spawn points
+    this.spawnPoints = this.map.getObjectLayer('Spawn Points').objects
+    this.enemySpawnPoints = this.map.getObjectLayer('Enemy Spawn Points').objects
+    this.enemySpawnPoints = this.enemySpawnPoints.map((point) => {
+      return { ...point, type: 'enemy', id: point.name.split('_')[1] }
+    })
+
+    // Filter the trigger objects
+    this.triggerPoints = this.enemySpawnPoints.filter((object) => object.name.includes('trigger'))
+    this.triggerPoints = this.triggerPoints.map((point) => {
+      const id = point.name.split('_')[1]
+      const spawner = this.enemySpawnPoints.find((spawner) => spawner.id === id)
+      return { ...point, type: 'trigger', id: id, isTriggered: false, spawner: spawner }
+    })
 
     this.socket.on('player', (data) => {
       const spawnPoint = this.spawnPoints[data.spawnPoint]
@@ -140,9 +143,12 @@ export default class BootScene extends Phaser.Scene {
       })
     })
 
+    this.socket.on('enemyTarget', this.updateEnemyTarget.bind(this))
     this.socket.on('playerAdded', this.addPlayer.bind(this))
     this.socket.on('playerDisconnected', this.removePlayer.bind(this))
     this.socket.on('updatePlayer', this.updatePlayer.bind(this))
+    this.socket.on('enemySpawned', this.spawnEnemy.bind(this))
+    this.socket.on('spawnerTriggered', this.spawnerTriggered.bind(this))
   }
 
   update() {
@@ -164,7 +170,55 @@ export default class BootScene extends Phaser.Scene {
     this.player.update()
     this.sendPlayerData()
 
+    // Check for triggers
+    this.triggerPoints.forEach((trigger) => {
+      if (this.player.y < trigger.y && !trigger.isTriggered) {
+        this.socket.emit('spawnerTrigger', { triggerId: trigger.name.split('_')[1] })
+        trigger.isTriggered = true
+      }
+    })
+
     // Update the other players
+    this.updateOtherPlayers()
+
+    // Update the enemies
+    this.entitiesService.enemies.forEach(({ enemy, inputHandler }) => {
+      // execute all the enemy's commands in the queue
+      const commands = inputHandler.getCommandQueue()
+      if (commands.length > 0) {
+        while (commands.length > 0) {
+          const command = commands.shift()
+          if (!command.execute) continue
+          command.execute(enemy)
+        }
+      }
+
+      // Handle enemy input
+      if (inputHandler.target) {
+        let target = null
+        if (inputHandler.target.targetId === this.player.connectionId) target = this.player
+        else target = this.entitiesService.getOtherPlayer(inputHandler.target.targetId).player
+
+        // console.log(inputHandler.target)
+        inputHandler.handleMoveInput(target)
+      }
+      enemy.update()
+
+      this.socket.emit('enemyData', {
+        enemy: {
+          connectionId: enemy.connectionId,
+          x: enemy.x,
+          y: enemy.y,
+          health: enemy.health,
+          type: enemy.type,
+          currentTarget: enemy.currentTarget || null,
+        },
+        targets: enemy.targets,
+      })
+    })
+  }
+
+  updateOtherPlayers() {
     this.entitiesService.otherPlayers.forEach(({ player, inputHandler }) => {
       //TODO: Create a handler and command for disconnected
       if (player.disconnected) {
@@ -190,11 +244,6 @@ export default class BootScene extends Phaser.Scene {
         //TODO: get the arrow from the player and add it to the scene
       }
     })
-
-    // Update the enemies
-    this.entitiesService.enemies.forEach(({ enemy, inputHandler }) => {
-      enemy.update()
-    })
   }
 
   sendPlayerData() {
@@ -215,6 +264,41 @@ export default class BootScene extends Phaser.Scene {
     })
 
     this.socket.emit('playerData', playerData)
+  }
+
+  // Update an enemy's main target
+  updateEnemyTarget(data) {
+    const { enemy, inputHandler } = this.entitiesService.getEnemy(data.enemy.connectionId)
+
+    console.log('target: ', data.target)
+    console.log('this player: ' + this.player.connectionId)
+
+    // TODO: Should we emit to the server to remove the enemy if we don't have a reference to it?
+    if (!enemy) return
+
+    // inputHandler.handleMoveInput(data.target)
+    inputHandler.target = data.target
+  }
+
+  spawnerTriggered(data) {
+    const trigger = this.triggerPoints.find((trigger) => trigger.name === 'trigger_' + data)
+    if (!trigger) return
+    trigger.isTriggered = true
+  }
+
+  spawnEnemy(data) {
+    // Create an enemy
+    const enemy = createCharacter(
+      'enemy',
+      this,
+      this.enemySpawnPoints[0].x + Math.random() * 100,
+      this.enemySpawnPoints[0].y + Math.random() * 100
+    )
+    // Create the input handler for this enemy
+    const inputHandler = createInputHandler('enemy', this)
+
+    enemy.connectionId = data.connectionId
+    this.entitiesService.addEnemy({ enemy, inputHandler: inputHandler })
   }
 
   removePlayer(data) {
