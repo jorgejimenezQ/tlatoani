@@ -32,6 +32,7 @@ export default class Enemy extends Character {
     const direction = targetVector.subtract(enemyVector).normalize().scale(this.moveSpeed)
 
     this.setVelocity(direction.x, direction.y)
+    // this.setFlipX(this.flipX)
   }
 
   attacking() {

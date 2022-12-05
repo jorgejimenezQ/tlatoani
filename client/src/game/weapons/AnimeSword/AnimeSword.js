@@ -8,11 +8,19 @@ export default class AnimeSword extends Item {
     const useConfig = config.useConfig || AnimeSword.config
     super({ ...config, ...useConfig })
 
+    this.damage = useConfig.damage
     this.initialRotation = useConfig.rotation
     this.rotationSpeed = useConfig.rotationSpeed
     this.ownerId = null
     this.swinging = false
     this.swingingRotation = Phaser.Math.DegToRad(useConfig.rotation)
+    this.currentTarget = null
+    this.events.on('swingComplete', () => {
+      console.log(this.currentTarget)
+      if (this.currentTarget) {
+        this.currentTarget.damage(this.damage)
+      }
+    })
   }
 
   setOwner(ownerId) {

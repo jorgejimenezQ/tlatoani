@@ -21,6 +21,7 @@ import EntitiesService from '../../service/entitiesStorage.service'
 import SocketConnection from '../../connection/connect'
 import Enemy from '../../enemies/Enemy'
 import InputHandler from '../../input/InputHandler'
+import InputHandlerService from '../../service/inputHandler.service'
 
 export default class BootScene extends Phaser.Scene {
   constructor() {
@@ -36,6 +37,7 @@ export default class BootScene extends Phaser.Scene {
     this.socketConnection.connect()
     this.socket = this.socketConnection.socket
     this.entitiesService = new EntitiesService()
+    this.inputHandlerService = new InputHandlerService(this.entitiesService)
     this.playerReady = false
     this.triggerPoints = null
   }
@@ -97,7 +99,7 @@ export default class BootScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels + 50)
 
     // set the camera to follow the player
-    this.cameras.main.setZoom(1.5)
+    // this.cameras.main.setZoom(1.5)
     this.cameras.main.setLerp(0.1, 0.1)
 
     // Set the spawn points
@@ -143,7 +145,10 @@ export default class BootScene extends Phaser.Scene {
       })
     })
 
-    this.socket.on('enemyTarget', this.updateEnemyTarget.bind(this))
+    this.socket.on(
+      'updateEnemy',
+      this.inputHandlerService.updateEnemyInput.bind(this.inputHandlerService)
+    )
     this.socket.on('playerAdded', this.addPlayer.bind(this))
     this.socket.on('playerDisconnected', this.removePlayer.bind(this))
     this.socket.on('updatePlayer', this.updatePlayer.bind(this))
@@ -194,6 +199,7 @@ export default class BootScene extends Phaser.Scene {
       }
 
       // Handle enemy input
+      // TODO: Fix the way we are handling the enemy move input
       if (inputHandler.target) {
         let target = null
         if (inputHandler.target.targetId === this.player.connectionId) target = this.player
@@ -202,11 +208,15 @@ export default class BootScene extends Phaser.Scene {
         // console.log(inputHandler.target)
         inputHandler.handleMoveInput(target)
       }
-      enemy.update()
 
+      // Update the enemy flipped state
+      inputHandler.handleFlipX()
+
+      enemy.update()
       this.socket.emit('enemyData', {
         enemy: {
           connectionId: enemy.connectionId,
+          velocity: enemy.velocity,
           x: enemy.x,
           y: enemy.y,
           health: enemy.health,
@@ -264,20 +274,6 @@ export default class BootScene extends Phaser.Scene {
     })
 
     this.socket.emit('playerData', playerData)
-  }
-
-  // Update an enemy's main target
-  updateEnemyTarget(data) {
-    const { enemy, inputHandler } = this.entitiesService.getEnemy(data.enemy.connectionId)
-
-    console.log('target: ', data.target)
-    console.log('this player: ' + this.player.connectionId)
-
-    // TODO: Should we emit to the server to remove the enemy if we don't have a reference to it?
-    if (!enemy) return
-
-    // inputHandler.handleMoveInput(data.target)
-    inputHandler.target = data.target
   }
 
   spawnerTriggered(data) {

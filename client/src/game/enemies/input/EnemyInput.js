@@ -17,6 +17,7 @@ export default class EnemyInputHandler {
     this.attackCommand = null
     this.flipXCommand = null
     this.target = null
+    this.flipX = false
   }
 
   // handle move input
@@ -25,6 +26,12 @@ export default class EnemyInputHandler {
     if (!target) return
 
     this.commandQueue.push(this.moveCommand(target))
+  }
+
+  handleFlipX() {
+    if (this.flipX === null) return
+
+    this.commandQueue.push(this.flipXCommand(this.flipX))
   }
 
   // handle attack input
@@ -65,5 +72,20 @@ export default class EnemyInputHandler {
     }
 
     return queue
+  }
+
+  /**
+   * Will set the status for the input handler. It will set the the move, attack, or flipX command. If the command is not
+   * set, it will throw an error.
+   *
+   * @param {string} key The key to set the command
+   * @param {object} data The data to pass to the command
+   */
+  setInputStatus(key, data) {
+    // Validate the key
+    if (!this.keyMaps[key]) throw new Error('The key passed in is not a valid key')
+
+    // Set the command
+    this.keyMaps[key](data)
   }
 }

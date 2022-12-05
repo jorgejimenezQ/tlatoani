@@ -21,7 +21,31 @@ const knightConfig = {
     firstFrame: 'knight_f_idle_anim_f0',
   },
   collisionCallbacks: {
-    ...playerConfig.collisionCallbacks,
+    outer: {
+      start: (data) => {
+        console.log('start collision outer')
+        if (!data.gameObjectB || !data.gameObjectA) return
+        const { gameObjectA, gameObjectB } = data
+        if (gameObjectA.type === 'player' && gameObjectB.type === 'player') return
+
+        // TODO: Calculate the distance between the player and enemy
+        if (gameObjectB.type === 'enemy' && !gameObjectA.sword.currentTarget) {
+          gameObjectA.sword.currentTarget = gameObjectB
+          console.log('hit enemy', gameObjectB.type)
+        }
+      },
+      end: (data) => {},
+    },
+    inner: {
+      start: (data) => {
+        const { bodyB, gameObjectA, gameObjectB } = data
+
+        if (!bodyB.isSensor && gameObjectA.type === 'player' && gameObjectB.type === 'player')
+          return
+        // console.log('inner: ', data)
+      },
+      end: (data) => {},
+    },
   },
   streamCommandMaps: {
     ...playerConfig.streamCommandMaps,

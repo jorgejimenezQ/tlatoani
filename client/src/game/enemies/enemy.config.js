@@ -25,6 +25,7 @@ const enemyConfig = {
   collisionCallbacks: {
     outer: {
       start: (data) => {
+        if (!data.gameObjectB || !data.gameObjectA) return
         // Get the characters involved
         const enemy = data.gameObjectA
         const other = data.gameObjectB
@@ -62,10 +63,12 @@ const enemyConfig = {
     flipX: EnemyInputHandler.constants.FLIP_X,
   },
   commands: {
-    flipX: function (flipped) {
+    flipX: function (isFlipped) {
       return {
         execute: (enemy) => {
-          enemy.flipX = flipped
+          console.log('flipX')
+          enemy.setFlipX(isFlipped)
+          // enemy.flipX = isFlipped
         },
       }
     },

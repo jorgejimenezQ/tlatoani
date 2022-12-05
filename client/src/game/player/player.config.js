@@ -28,6 +28,7 @@ const playerConfig = {
   collisionCallbacks: {
     outer: {
       start: (data) => {
+        if (!data.gameObjectB || !data.gameObjectA) return
         const { gameObjectA, gameObjectB } = data
         if (gameObjectA.type === 'player' && gameObjectB.type === 'player') return
       },

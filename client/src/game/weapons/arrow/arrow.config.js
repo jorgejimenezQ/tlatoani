@@ -11,7 +11,7 @@ const arrowConfig = {
   scale: 0.75,
   speed: 4,
   fixedRotation: true,
-  damage: 1,
+  damage: 4,
   //   offset: {
   //     x: 3,
   //     y: 7,

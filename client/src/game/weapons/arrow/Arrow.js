@@ -8,6 +8,8 @@ export default class Arrow extends Item {
     const useConfig = config.useConfig || Arrow.config
     super({ ...config, ...useConfig })
 
+    this.damage = useConfig.damage
+
     // Get the direction vector of the mouse pointer
     this.mousePosition = { x: config.mouseX, y: config.mouseY }
     this.speed = useConfig.speed
@@ -28,9 +30,14 @@ export default class Arrow extends Item {
     })
 
     this.addOnCollideOuterStart((data) => {
+      if (!data.gameObjectB || !data.gameObjectA) return
       if (data.bodyB.isSensor) return
       if (data.gameObjectB.type == 'player') return
       if (data.gameObjectB.type == 'weapon') return
+
+      if (data.gameObjectB.type == 'enemy') {
+        data.gameObjectB.damage(this.damage)
+      }
 
       this.events.emit('killArrow')
       this.destroy()

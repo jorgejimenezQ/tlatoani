@@ -18,6 +18,18 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     this.moveSpeed = config.moveSpeed || 1
     this.dropItems = config.dropItems || []
 
+    this.damageText = this.scene.add.text(
+      this.x + this.width + 10,
+      this.y + this.height + 10,
+      this.health,
+      {
+        font: '16px Quicksand',
+        // wordWrapWidth: sprite.width,
+        align: 'center',
+        // backgroundColor: '#ffff00',
+      }
+    )
+
     // Character animations and sprites
     this.animations = config.animations
 
@@ -81,7 +93,7 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     // Is the character still alive?
     //TODO: We should probably have a death animation.
     // Should we kill the character here? or in the game scene?
-    if (this.health <= 0) this.deathEmitter.emit('death')
+    if (this.health <= 0) this.events.emit('death')
 
     // console.log the magnitude of the character's velocity
     const { x, y } = this.body.velocity
@@ -89,6 +101,12 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
 
     if (velocityMagnitude === 0) this.runIdleAnimation()
     else this.runWalkAnimation()
+
+    // Display the character's health above the character
+    this.damageText.setText(this.health)
+
+    this.damageText.x = this.x
+    this.damageText.y = this.y - 20
 
     //TODO: When the character is flipped we need to emit the flip event
   }
@@ -112,12 +130,24 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
   damage(damage) {
     this.health -= damage
 
+    this.takeDamage()
+
     // Is the character dead?
     if (this.health <= 0) {
       this.events.emit('death')
     }
   }
 
+  takeDamage(damage) {
+    this.setTint(0xff0000)
+    // Add red tint to this character
+    this.scene.time.addEvent({
+      delay: 100,
+      callback: () => {
+        this.clearTint()
+      },
+    })
+  }
   /**
    */
   drop(quantity, item) {
