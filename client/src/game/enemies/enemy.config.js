@@ -22,6 +22,10 @@ const enemyConfig = {
     walk: 'zombie_walk',
     key: 'bi_zombie_anim',
   },
+  deathCallback: function () {
+    console.log('enemy died')
+    this.dead = true
+  },
   collisionCallbacks: {
     outer: {
       start: (data) => {

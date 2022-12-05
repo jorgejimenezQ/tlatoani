@@ -25,6 +25,10 @@ export default class Enemy extends Character {
   update() {
     super.update()
 
+    if (this.dead) {
+      this.setVelocity(0)
+      return
+    }
     if (!this.currentTarget) return
     // Calculate the direction from the enemy to the target
     const targetVector = new Phaser.Math.Vector2(this.currentTarget.x, this.currentTarget.y)

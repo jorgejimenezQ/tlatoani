@@ -16,6 +16,7 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     this.health = config.health || 100
     this._attack = config.attack || 2
     this.moveSpeed = config.moveSpeed || 1
+    this.dead = false
     this.dropItems = config.dropItems || []
 
     this.damageText = this.scene.add.text(
@@ -36,6 +37,9 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     // Set the depth of the character
     // this.setDepth(1)
     this.events = new Phaser.Events.EventEmitter()
+
+    // Subscribe to the death EventEmitter
+    if (config.deathCallback) this.events.on('death', config.deathCallback.bind(this))
 
     // Set the character's body
     this.sensorSize = config.sensorSize || this.width * 1.5
@@ -82,6 +86,12 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
   }
 
   update(time, delta) {
+    // Is the character still alive?
+    //TODO: We should probably have a death animation.
+    // Should we kill the character here? or in the game scene?
+    if (this.health <= 0) return
+
+    // TODO: are we using these?
     if (this.lastPosition.x == this.x && this.lastPosition.y == this.y) this.moved = false
     else this.moved = true
     if (this.flipX == this.lastFlipX) this.flipped = false
@@ -89,11 +99,6 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
 
     this.lastFlipX = this.flipX
     this.lastPosition.set(this.x, this.y)
-
-    // Is the character still alive?
-    //TODO: We should probably have a death animation.
-    // Should we kill the character here? or in the game scene?
-    if (this.health <= 0) this.events.emit('death')
 
     // console.log the magnitude of the character's velocity
     const { x, y } = this.body.velocity
@@ -139,7 +144,7 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
   }
 
   takeDamage(damage) {
-    this.setTint(0xff0000)
+    this.setTint(0xff0505)
     // Add red tint to this character
     this.scene.time.addEvent({
       delay: 100,
@@ -243,9 +248,5 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
 
   get velocity() {
     return this.body.velocity
-  }
-
-  get dead() {
-    return this.health <= 0
   }
 }
