@@ -10,6 +10,7 @@ const bowConfig = {
   image: assets.weaponsPng,
   sensorSize: 6,
   scale: 0.75,
+  // TODO: factor in the archer's speed
   fireRate: 1000,
   offset: {
     x: 2,

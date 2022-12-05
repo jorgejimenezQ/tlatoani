@@ -23,7 +23,6 @@ const enemyConfig = {
     key: 'bi_zombie_anim',
   },
   deathCallback: function () {
-    console.log('enemy died')
     this.dead = true
   },
   collisionCallbacks: {
@@ -70,7 +69,6 @@ const enemyConfig = {
     flipX: function (isFlipped) {
       return {
         execute: (enemy) => {
-          console.log('flipX')
           enemy.setFlipX(isFlipped)
           // enemy.flipX = isFlipped
         },

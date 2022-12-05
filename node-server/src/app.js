@@ -24,9 +24,9 @@ const enemies = {}
 const spawner = new Spawner('enemy')
 
 // let playerTypes = ['archer', 'knight', 'slime']
-let playerTypes = ['archer', 'knight']
+// let playerTypes = ['archer', 'knight']
 // let playerTypes = ['archer']
-// let playerTypes = ['knight']
+let playerTypes = ['knight']
 
 io.use((socket, next) => {
   const { connectionId } = socket.handshake.auth

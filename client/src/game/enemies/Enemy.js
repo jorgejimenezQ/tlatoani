@@ -25,7 +25,7 @@ export default class Enemy extends Character {
   update() {
     super.update()
 
-    if (this.dead) {
+    if (this.isDead) {
       this.setVelocity(0)
       return
     }

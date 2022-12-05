@@ -16,7 +16,6 @@ export default class AnimeSword extends Item {
     this.swingingRotation = Phaser.Math.DegToRad(useConfig.rotation)
     this.currentTarget = null
     this.events.on('swingComplete', () => {
-      console.log(this.currentTarget)
       if (this.currentTarget) {
         this.currentTarget.damage(this.damage)
       }

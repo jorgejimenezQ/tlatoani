@@ -1,4 +1,3 @@
-import Phaser from 'phaser'
 import playerConfig from '../player/player.config'
 import knight_atlas from './assets/knight_atlas.json'
 import knight_png from './assets/knight.png'
@@ -23,18 +22,24 @@ const knightConfig = {
   collisionCallbacks: {
     outer: {
       start: (data) => {
-        console.log('start collision outer')
         if (!data.gameObjectB || !data.gameObjectA) return
-        const { gameObjectA, gameObjectB } = data
-        if (gameObjectA.type === 'player' && gameObjectB.type === 'player') return
+        const { gameObjectA, gameObjectB, bodyB } = data
+        if (gameObjectB.type === 'player' || gameObjectB.dead || bodyB.isSensor) return
 
         // TODO: Calculate the distance between the player and enemy
         if (gameObjectB.type === 'enemy' && !gameObjectA.sword.currentTarget) {
           gameObjectA.sword.currentTarget = gameObjectB
-          console.log('hit enemy', gameObjectB.type)
         }
       },
-      end: (data) => {},
+      end: (data) => {
+        if (!data.gameObjectB || !data.gameObjectA) return
+        const { gameObjectA, gameObjectB } = data
+        if (gameObjectA.type === 'player' && gameObjectB.type === 'player') return
+
+        if (gameObjectB.type === 'enemy' && gameObjectA.sword.currentTarget) {
+          gameObjectA.sword.currentTarget = null
+        }
+      },
     },
     inner: {
       start: (data) => {

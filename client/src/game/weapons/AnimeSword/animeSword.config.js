@@ -6,7 +6,7 @@ const animeSwordConfig = {
   frame: assets.animeSword,
   rotationSpeed: 6,
   rotation: 130,
-  damage: 5,
+  damage: 2,
 }
 
 export default animeSwordConfig

@@ -16,7 +16,7 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     this.health = config.health || 100
     this._attack = config.attack || 2
     this.moveSpeed = config.moveSpeed || 1
-    this.dead = false
+    this.isDead = false
     this.dropItems = config.dropItems || []
 
     this.damageText = this.scene.add.text(
@@ -89,7 +89,10 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     // Is the character still alive?
     //TODO: We should probably have a death animation.
     // Should we kill the character here? or in the game scene?
-    if (this.health <= 0) return
+    if (this.health <= 0) {
+      this.isDead = true
+      return
+    }
 
     // TODO: are we using these?
     if (this.lastPosition.x == this.x && this.lastPosition.y == this.y) this.moved = false
