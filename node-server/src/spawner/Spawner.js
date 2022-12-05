@@ -2,7 +2,7 @@ export default class Spawner {
   spawnerType = null
   spawnRate = 1
   isActive = false
-  limit = 1
+  limit = 5
   quantity = 0
   // Holds the timer for the spawner
   timer = null
