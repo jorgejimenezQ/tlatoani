@@ -1,0 +1,52 @@
+{
+    "anims": [
+        {
+            "key": "zombie_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "big_zombie",
+                    "frame": "big_zombie_idle_anim_f0"
+                },
+                {
+                    "key": "big_zombie",
+                    "frame": "big_zombie_idle_anim_f1"
+                },
+                {
+                    "key": "big_zombie",
+                    "frame": "big_zombie_idle_anim_f2"
+                },
+                {
+                    "key": "big_zombie",
+                    "frame": "big_zombie_idle_anim_f3"
+                }
+            ]
+        },
+        {
+            "key": "zombie_walk",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "big_zombie",
+                    "frame": "big_zombie_run_anim_f0"
+                },
+                {
+                    "key": "big_zombie",
+                    "frame": "big_zombie_run_anim_f1"
+                },
+                {
+                    "key": "big_zombie",
+                    "frame": "big_zombie_run_anim_f2"
+                },
+                {
+                    "key": "big_zombie",
+                    "frame": "big_zombie_run_anim_f3"
+                }
+            ]
+        }
+    ]
+}

@@ -7,6 +7,24 @@ export default class InputHandler {
   // All the input handlers
   InputHandlers = []
 
+  static constants = {
+    DOWN_KEY: 'DOWN_KEY',
+    UP_KEY: 'UP_KEY',
+    LEFT_KEY: 'LEFT_KEY',
+    RIGHT_KEY: 'RIGHT_KEY',
+    POINTER_DOWN: 'POINTER_DOWN',
+    MOUSE_MOVE: 'MOUSE_MOVE',
+  }
+
+  keyMaps = {
+    DOWN_KEY: this.setDownKeyCommand.bind(this),
+    UP_KEY: this.setUpKeyCommand.bind(this),
+    LEFT_KEY: this.setLeftKeyCommand.bind(this),
+    RIGHT_KEY: this.setRightKeyCommand.bind(this),
+    POINTER_DOWN: this.setPointerDownCommand.bind(this),
+    MOUSE_MOVE: this.setMouseMoveInput.bind(this),
+  }
+
   constructor(input) {
     this.input = input
 
@@ -71,6 +89,31 @@ export default class InputHandler {
     if (this.input.activePointer.isDown) this.commandQueue.push(this.pointerDownCommand)
   }
 
+  /** Set the command to execute when the mouse is moved */
+  setMouseMoveInput(command) {
+    if (!command) throw new Error('The command passed in cannot be null')
+
+    this.input.on('pointermove', (pointer) => {
+      this.commandQueue.push(command(pointer))
+    })
+  }
+
+  setPointerDownCommand(command) {
+    if (!command) throw new Error('The command passed in cannot be null')
+    this.pointerDownCommand = command
+  }
+
+  /** Set the command to be execute when the mouse pointer is down */
+  setCommand(key, command) {
+    // Validate the key and command
+    if (!command) throw new Error('The command passed in cannot be null')
+    if (!this.keyMaps[key]) throw new Error('The key passed in is not a valid key')
+
+    // Use the key to set the command
+    this.keyMaps[key](command)
+  }
+
+  /** Get all the commands in the queue */
   getCommandQueue() {
     let queue = []
     if (this.commandQueue.length > 0) {
@@ -83,14 +126,6 @@ export default class InputHandler {
 
   clearCommandQueue() {
     this.commandQueue = []
-  }
-
-  /** Set the command to be execute when the mouse pointer is down */
-  setCommand(command) {}
-
-  setPointerDownCommand(command) {
-    if (!command) throw new Error('The command passed in cannot be null')
-    this.pointerDownCommand = command
   }
 
   /** Set the command to be executed when the up key is pressed */

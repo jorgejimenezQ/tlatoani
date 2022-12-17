@@ -2,7 +2,11 @@ import Game from './game/game'
 import './App.css'
 
 function App() {
-  return <Game />
+  return (
+    <div className='game-container'>
+      <Game />
+    </div>
+  )
 }
 
 export default App

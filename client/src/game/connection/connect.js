@@ -1,37 +1,37 @@
 import io from 'socket.io-client'
-import entitiesService from '../service/entitiesStorage.service'
-import EventEmitter from 'events'
 import { v4 as uuidv4 } from 'uuid'
 
-const socket = io('http://127.0.0.1:8000')
-const connectionId = uuidv4()
-const connectionEvents = new EventEmitter()
+class SocketConnection {
+  constructor() {
+    this.socket = io('http://127.0.0.1:8000', { autoConnect: false })
+    this.connectionId = uuidv4()
 
-socket.connectionId = connectionId
-socket.on('connect', (data) => {
-  console.log('Connected to server')
-  entitiesService.events.emit('connected', connectionId)
-})
+    this.socket.auth = { connectionId: this.connectionId }
+    this.socket.connectionId = this.connectionId
+    console.log('connectionId: ' + this.connectionId)
+  }
 
-socket.on('count', (data) => {
-  console.log('The server responded with ' + data)
-})
+  getSocket() {
+    return this.socket
+  }
 
-socket.on('player', (data) => {
-  console.log('The ' + data + ' was chosen')
-  entitiesService.setPlayer(data)
-})
+  connect() {
+    this.socket.connect()
 
-socket.on('playerAdded', (data) => {
-  console.log('The ' + data + ' was added')
-})
+    // this.socket.on('connect', (data) => {
+    //   this.socket.emit('getPlayer')
+    // })
 
-socket.on('updatePlayer', (data) => {
-  const playerData = JSON.parse(data)
-  //   console.log('player: ' + playerData.id + ' updated')
-})
+    // this.socket.on('updatePlayer', (data) => {
+    //   const playerData = JSON.parse(data)
+    //   //   console.log('player: ' + playerData.id + ' updated')
+    // })
+  }
+}
+
+const socketConnection = new SocketConnection()
+socketConnection.connect()
+const socket = socketConnection.getSocket()
+socket.connectionId = socketConnection.connectionId
 
 export default socket
-
-//q: How to npm install for dev?
-//a: npm install --save-dev

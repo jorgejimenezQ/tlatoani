@@ -1,0 +1,112 @@
+{
+    "frames": [
+        {
+            "filename": "big_zombie_idle_anim_f0",
+            "frame": {
+                "w": 32,
+                "h": 34,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "big_zombie_idle_anim_f1",
+            "frame": {
+                "w": 32,
+                "h": 34,
+                "x": 34,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "big_zombie_idle_anim_f2",
+            "frame": {
+                "w": 32,
+                "h": 34,
+                "x": 1,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "big_zombie_idle_anim_f3",
+            "frame": {
+                "w": 32,
+                "h": 34,
+                "x": 34,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "big_zombie_run_anim_f0",
+            "frame": {
+                "w": 32,
+                "h": 34,
+                "x": 67,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "big_zombie_run_anim_f1",
+            "frame": {
+                "w": 32,
+                "h": 34,
+                "x": 67,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "big_zombie_run_anim_f2",
+            "frame": {
+                "w": 32,
+                "h": 34,
+                "x": 1,
+                "y": 71
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "big_zombie_run_anim_f3",
+            "frame": {
+                "w": 32,
+                "h": 34,
+                "x": 34,
+                "y": 71
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

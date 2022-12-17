@@ -3,6 +3,7 @@ import mapTileset from './assets/map_tileset.png'
 const config = {
   mapJson: map,
   mapTileset: mapTileset,
+  mapScale: 2,
 }
 
 export default config
