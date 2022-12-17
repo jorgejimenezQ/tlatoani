@@ -11,7 +11,7 @@ const bowConfig = {
   sensorSize: 6,
   scale: 0.75,
   // TODO: factor in the archer's speed
-  fireRate: 1000,
+  fireRate: 500,
   offset: {
     x: 2,
     y: 7,

@@ -1,4 +1,4 @@
-import InputHandler from '../../input/InputHandler'
+import InputHandler from '../../../input/InputHandler'
 import Phaser from 'phaser'
 
 export default class PlayerInputHandler extends InputHandler {

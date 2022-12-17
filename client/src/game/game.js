@@ -1,42 +1,48 @@
-import React from 'react'
-
+import React, { useCallback, useEffect, useState } from 'react'
 import Phaser from 'phaser'
-import matterPlugin from 'phaser-matter-collision-plugin'
-import BootScene from './scenes/boot/BootScene'
+import gameConfig from './game.config'
+import socket from './connection/connect'
 
 const Game = () => {
-  const config = {
-    type: Phaser.AUTO,
-    width: 600,
-    height: 350,
-    parent: 'game-content',
-    backgroundColor: '#000000',
-    scene: [BootScene],
-    scale: {
-      zoom: 2,
-    },
-    physics: {
-      default: 'matter',
-      matter: {
-        gravity: {
-          y: 0,
-        },
-        debug: true,
-      },
-    },
-    plugins: {
-      scene: [
-        {
-          plugin: matterPlugin, // The plugin class
-          key: 'matterCollision', // Where to store in Scene.Systems, e.g. scene.sys.matterCollision
-          mapping: 'matterCollision', // Where to store in the Scene, e.g. scene.matterCollision
-        },
-      ],
-    },
+  const [newGame, setNewGame] = useState(false)
+  const [isConnected, setIsConnected] = useState(false)
+
+  useEffect(() => {
+    if (socket.connected) setIsConnected(true)
+  }, [isConnected, newGame])
+
+  const startGame = useCallback(() => {
+    new Phaser.Game(gameConfig)
+  }, [])
+
+  const onFindSession = (e) => {
+    e.preventDefault()
+    console.log('start game')
   }
 
-  new Phaser.Game(config)
-  return <div id='game-content' />
+  const onNewSession = (e) => {
+    e.preventDefault()
+
+    setNewGame(true)
+
+    socket.emit('createSession', { username: 'test' })
+  }
+
+  return (
+    <>
+      <div id='game-content' />
+      <form className='start_game_form'>
+        <label>Username</label>
+        <input type='text' name='username' />
+        <label>Game ID</label>
+        <input type='text' name='gameId' />
+        <div className='button_horizontal'>
+          <button onClick={onFindSession}>Find Session</button>
+          <button onClick={onNewSession}>New Session</button>
+        </div>
+      </form>
+    </>
+  )
 }
 
 export default Game

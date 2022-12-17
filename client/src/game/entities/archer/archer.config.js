@@ -4,7 +4,7 @@ import archer_png from './assets/archer.png'
 import playerConfig from '../player/player.config'
 import Phaser from 'phaser'
 import PlayerInputHandler from '../player/input/PlayerInputHandler'
-import StreamInputHandler from '../input/StreamInputHandler'
+import StreamInputHandler from '../../input/StreamInputHandler'
 import ArcherStreamInputHandler from './input/ArcherStreamInputHandler'
 
 const archerConfig = {

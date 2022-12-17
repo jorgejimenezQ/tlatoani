@@ -1,25 +1,25 @@
-/** @type {import{}} */
+/** @type {import{../../../../../typings/phaser}} */
 import Phaser from 'phaser'
 
-import assets from './bootScene.config'
+import bootSceneConfig from './bootScene.config'
 
 // Characters
-import Player from '../../player/Player'
-import Archer from '../../archer/Archer'
-import Slime from '../../slime/Slime'
-import Knight from '../../knight/Knight'
+import Player from '../../entities/player/Player'
+import Archer from '../../entities/archer/Archer'
+import Slime from '../../entities/slime/Slime'
+import Knight from '../../entities/knight/Knight'
 
 // Character Factory
 import { createCharacter, createInputHandler, createStreamedInput } from '../../factory/factory'
 
 // Items
-import Bow from '../../weapons/bow/Bow'
+import Bow from '../../entities/weapons/bow/Bow'
 
 // Multiplayer stuff
 // import socket from '../../connection/connect'
 import EntitiesService from '../../service/entitiesStorage.service'
 import SocketConnection from '../../connection/connect'
-import Enemy from '../../enemies/Enemy'
+import Enemy from '../../entities/enemies/Enemy'
 import InputHandler from '../../input/InputHandler'
 import InputHandlerService from '../../service/inputHandler.service'
 
@@ -44,9 +44,9 @@ export default class BootScene extends Phaser.Scene {
 
   preload() {
     // Load the map tileset
-    this.load.image('tiles', assets.mapTileset)
+    this.load.image('tiles', bootSceneConfig.mapTileset)
     // Load the map
-    this.load.tilemapTiledJSON('map', assets.mapJson)
+    this.load.tilemapTiledJSON('map', bootSceneConfig.mapJson)
 
     // Load player assets using Player.config
     this.load.atlas(Player.config.texture, Player.config.image, Player.config.atlas)
@@ -101,6 +101,7 @@ export default class BootScene extends Phaser.Scene {
     // set the camera to follow the player
     // this.cameras.main.setZoom(1.5)
     this.cameras.main.setLerp(0.1, 0.1)
+    this.cameras.main.zoom = 2
 
     // Set the spawn points
     this.spawnPoints = this.map.getObjectLayer('Spawn Points').objects
@@ -154,6 +155,7 @@ export default class BootScene extends Phaser.Scene {
     this.socket.on('updatePlayer', this.updatePlayer.bind(this))
     this.socket.on('enemySpawned', this.spawnEnemy.bind(this))
     this.socket.on('spawnerTriggered', this.spawnerTriggered.bind(this))
+    this.socket.on('destroyEnemy', this.destroyEnemy.bind(this))
   }
 
   update() {
@@ -188,6 +190,11 @@ export default class BootScene extends Phaser.Scene {
 
     // Update the enemies
     this.entitiesService.enemies.forEach(({ enemy, inputHandler }) => {
+      if (enemy.isDead) {
+        this.socket.emit('enemyDeath', { connectionId: enemy.connectionId })
+        enemy.destroy()
+        return
+      }
       // execute all the enemy's commands in the queue
       const commands = inputHandler.getCommandQueue()
       if (commands.length > 0) {
@@ -213,6 +220,11 @@ export default class BootScene extends Phaser.Scene {
       inputHandler.handleFlipX()
 
       enemy.update()
+      if (enemy.isDead) {
+        this.socket.emit('enemyDeath', { connectionId: enemy.connectionId })
+        enemy.destroy()
+        return
+      }
       this.socket.emit('enemyData', {
         enemy: {
           connectionId: enemy.connectionId,
@@ -280,6 +292,13 @@ export default class BootScene extends Phaser.Scene {
     const trigger = this.triggerPoints.find((trigger) => trigger.name === 'trigger_' + data)
     if (!trigger) return
     trigger.isTriggered = true
+  }
+
+  destroyEnemy(enemyId) {
+    const { enemy } = this.entitiesService.getEnemy(enemyId)
+    if (!enemy) return
+
+    enemy.health = 0
   }
 
   spawnEnemy(data) {

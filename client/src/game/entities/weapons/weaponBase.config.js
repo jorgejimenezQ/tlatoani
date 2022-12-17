@@ -1,4 +1,4 @@
-import assets from './assetTable'
+// import assets from './assetTable'
 
 const baseWeaponConfig = {
   name: 'base',

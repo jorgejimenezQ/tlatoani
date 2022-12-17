@@ -47,6 +47,7 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     this.characterSensor = null
     this.characterCollider = null
 
+    // this.setScale(config.scale || 2)
     // Add the character to the scene
     scene.add.existing(this)
 
@@ -78,6 +79,7 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     this.disconnected = false
     this.events.on('disconnect', () => {
       this.disconnected = true
+      this.damageText.destroy()
       console.log('Character disconnected')
     })
 
@@ -91,6 +93,7 @@ export default class Character extends Phaser.Physics.Matter.Sprite {
     // Should we kill the character here? or in the game scene?
     if (this.health <= 0) {
       this.isDead = true
+      this.damageText.destroy()
       return
     }
 

@@ -2,7 +2,7 @@ import female_atlas from './assets/female_atlas.json'
 import female_png from './assets/female.png'
 import female_animJson from './assets/female_anim.json'
 import PlayerInputHandler from './input/PlayerInputHandler'
-import StreamInputHandler from '../input/StreamInputHandler'
+import StreamInputHandler from '../../input/StreamInputHandler'
 
 const playerConfig = {
   atlas: female_atlas,

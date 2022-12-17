@@ -1,4 +1,4 @@
-import StreamInputHandler from '../../input/StreamInputHandler'
+import StreamInputHandler from '../../../input/StreamInputHandler'
 
 export default class ArcherStreamInputHandler extends StreamInputHandler {
   static constants = {

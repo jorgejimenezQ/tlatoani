@@ -10,7 +10,7 @@ const enemyConfig = {
   image: big_zombie_png,
   type: 'enemy',
   health: 100,
-  sensorSize: 100,
+  sensorSize: 190,
   collisionSize: 12,
   attack: 1,
   moveSpeed: 1,

@@ -16,7 +16,7 @@ export default class AnimeSword extends Item {
     this.swingingRotation = Phaser.Math.DegToRad(useConfig.rotation)
     this.currentTarget = null
     this.events.on('swingComplete', () => {
-      if (this.currentTarget) {
+      if (this.currentTarget && !this.currentTarget.isDead) {
         this.currentTarget.damage(this.damage)
       }
     })
@@ -27,6 +27,7 @@ export default class AnimeSword extends Item {
   }
 
   update() {
+    if (this.currentTarget && this.currentTarget.isDead) this.currentTarget = null
     if (this.swinging) {
       this.swingingRotation += this.rotationSpeed
     } else {

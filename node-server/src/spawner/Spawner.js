@@ -1,5 +1,4 @@
 export default class Spawner {
-  spawnerType = null
   spawnRate = 1
   isActive = false
   limit = 5
@@ -7,9 +6,7 @@ export default class Spawner {
   // Holds the timer for the spawner
   timer = null
 
-  constructor(spawnerType) {
-    this.spawnerType = spawnerType
-  }
+  constructor() {}
 
   deactivate() {
     this.isActive = false

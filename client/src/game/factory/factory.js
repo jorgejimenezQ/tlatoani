@@ -1,16 +1,16 @@
-import Player from '../player/Player'
-import Slime from '../slime/Slime'
-import Knight from '../knight/Knight'
-import Archer from '../archer/Archer'
-import Enemy from '../enemies/Enemy'
+import Player from '../entities/player/Player'
+import Slime from '../entities/slime/Slime'
+import Knight from '../entities/knight/Knight'
+import Archer from '../entities/archer/Archer'
+import Enemy from '../entities/enemies/Enemy'
 
 // input handlers
-import KnightInputHandler from '../knight/input/KnightInputHandler'
-import ArcherInputHandler from '../archer/input/ArcherInputHandler'
-import PlayerInputHandler from '../player/input/PlayerInputHandler'
+import KnightInputHandler from '../entities/knight/input/KnightInputHandler'
+import ArcherInputHandler from '../entities/archer/input/ArcherInputHandler'
+import PlayerInputHandler from '../entities/player/input/PlayerInputHandler'
 import StreamInputHandler from '../input/StreamInputHandler'
-import ArcherStreamInputHandler from '../archer/input/ArcherStreamInputHandler'
-import EnemyInputHandler from '../enemies/input/EnemyInput'
+import ArcherStreamInputHandler from '../entities/archer/input/ArcherStreamInputHandler'
+import EnemyInputHandler from '../entities/enemies/input/EnemyInput'
 
 const characterTypes = {
   player: { class: Player, config: Player.config, inputHandler: PlayerInputHandler },

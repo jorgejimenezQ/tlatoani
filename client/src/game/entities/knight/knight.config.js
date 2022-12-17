@@ -3,7 +3,7 @@ import knight_atlas from './assets/knight_atlas.json'
 import knight_png from './assets/knight.png'
 import knight_animJson from './assets/knight_anim.json'
 import PlayerInputHandler from '../player/input/PlayerInputHandler'
-import StreamInputHandler from '../input/StreamInputHandler'
+import StreamInputHandler from '../../input/StreamInputHandler'
 
 const knightConfig = {
   ...playerConfig,
