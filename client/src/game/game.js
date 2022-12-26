@@ -2,45 +2,69 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Phaser from 'phaser'
 import gameConfig from './game.config'
 import socket from './connection/connect'
+import { useSelector, useDispatch } from 'react-redux'
+import { setGameSession, updateUsername } from '../features/gameSession/gameSessionSlice'
+import { setConnection } from '../features/connection/connectionSlice'
+import playerSelectSceneConfig from './scenes/playerSelect/playerSelectScene.config'
 
 const Game = () => {
-  const [newGame, setNewGame] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
+  const [username, setUsername] = useState('')
+  const [gameStarted, setGameStarted] = useState(false)
+  const otherPlayers = useSelector((state) => state.gameSession.otherPlayers)
+
+  const currentGameSession = useSelector((state) => state.gameSession.gameSessionId)
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (socket.connected) setIsConnected(true)
-  }, [isConnected, newGame])
+    dispatch(setConnection(socket.connectionId))
+  }, [isConnected])
 
-  const startGame = useCallback(() => {
-    new Phaser.Game(gameConfig)
-  }, [])
-
-  const onFindSession = (e) => {
-    e.preventDefault()
-    console.log('start game')
-  }
-
-  const onNewSession = (e) => {
+  const onJoinGame = (e) => {
     e.preventDefault()
 
-    setNewGame(true)
+    if (username === '') {
+      console.log('Please enter a username')
+      return
+    }
 
-    socket.emit('createSession', { username: 'test' })
+    const playerLimit = playerSelectSceneConfig.playerLimit
+
+    socket.emit('joinSession', username, playerLimit, (response) => {
+      setGameStarted(true)
+      dispatch(setGameSession({ session: response.session, isHost: response.isHost }))
+      new Phaser.Game(gameConfig)
+    })
+    dispatch(updateUsername(username))
   }
 
   return (
     <>
       <div id='game-content' />
-      <form className='start_game_form'>
+      <form className={'start_game_form ' + (gameStarted ? 'hidden' : '')}>
+        {/* <h1>{username}</h1> */}
         <label>Username</label>
-        <input type='text' name='username' />
-        <label>Game ID</label>
-        <input type='text' name='gameId' />
+        <input
+          type='text'
+          name='username'
+          onChange={(e) => {
+            setUsername(e.target.value)
+          }}
+        />
         <div className='button_horizontal'>
-          <button onClick={onFindSession}>Find Session</button>
-          <button onClick={onNewSession}>New Session</button>
+          <button onClick={onJoinGame} disabled={gameStarted}>
+            Join Game
+          </button>
         </div>
       </form>
+      <div style={{ color: 'white' }}>
+        <h2>The Other Players</h2>
+        {otherPlayers.map((player) => {
+          return <p key={player.connectionId}>{player.username + ' - ' + player.playerType}</p>
+        })}
+      </div>
     </>
   )
 }

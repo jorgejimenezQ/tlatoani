@@ -22,6 +22,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+/.vscode
+startGame.sh
+
 client/node_modules
 node-server/node_modules
 

@@ -5,13 +5,14 @@ import BootScene from './scenes/boot/BootScene'
 import MenuScene from './scenes/menu/MenuScene'
 import LoadScene from './scenes/load/LoadScene'
 import PlayerSelect from './scenes/playerSelect/PlayerSelect'
+import MainScene from './scenes/main/MainScene'
 
 const gameConfig = {
   type: Phaser.AUTO,
   width: 900,
   height: 650,
   parent: 'game-content',
-  scene: [LoadScene, MenuScene, PlayerSelect],
+  scene: [LoadScene, MenuScene, PlayerSelect, MainScene],
   //   scene: [BootScene],
   // scale: {
   //   mode: Phaser.Scale.FIT,

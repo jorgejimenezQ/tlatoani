@@ -137,7 +137,6 @@ export default class BootScene extends Phaser.Scene {
     })
 
     /** Listen for the server  */
-
     this.socket.on('players', (data) => {
       const keys = Object.keys(data)
       keys.forEach((key) => {

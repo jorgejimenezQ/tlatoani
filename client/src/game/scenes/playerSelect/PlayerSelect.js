@@ -1,6 +1,13 @@
 import Phaser from 'phaser'
 import playerSelectConfig from './playerSelectScene.config'
 import SimpleButton from '../../simpleButton/SimpleButton'
+import store from '../../../app/store'
+import mainSceneConfig from '../main/mainScene.config'
+import {
+  setPlayerType,
+  setPlayerIndex,
+  addPlayer,
+} from '../../../features/gameSession/gameSessionSlice'
 
 export default class PlayerSelect extends Phaser.Scene {
   selectBtnY = 250
@@ -15,10 +22,15 @@ export default class PlayerSelect extends Phaser.Scene {
     super({ key: playerSelectConfig.key })
     this.socket = null
     this.player = null
+    this.playerType = null
     this.selected = null
     this.confirmBtn = null
+    this.startBtn = null
     this.playerBtns = []
     this.prompt = null
+    this.gameSessionId = store.getState().gameSession.gameSessionId
+    console.log(store.getState())
+    this.connectionId = store.getState().connection.connectionId
   }
 
   init({ socket }) {
@@ -51,7 +63,7 @@ export default class PlayerSelect extends Phaser.Scene {
           btnHeight,
           playerSelectConfig.players[key].text,
           { fontSize: '32px', fill: '#ffffff' },
-          () => this.selectPlayer(index)
+          this.selectPlayer.bind(this, index, key)
         )
       )
     })
@@ -72,12 +84,17 @@ export default class PlayerSelect extends Phaser.Scene {
       this.confirmClick.bind(this)
     )
 
-    this.socket.emit('getOtherPlayers', (otherPlayers) => {
+    // Add characters selected by other players
+    this.socket.emit('getOtherPlayers', this.gameSessionId, (otherPlayers) => {
       const otherPlayerIds = Object.keys(otherPlayers)
-      console.log(otherPlayers)
       otherPlayerIds.forEach((id) => {
-        if (otherPlayers[id].selectedPlayerIndex !== null && id !== this.socket.connectionId) {
+        if ('selectedPlayerIndex' in otherPlayers[id] && id !== this.socket.connectionId) {
           this.selectOtherPlayer(otherPlayers[id].selectedPlayerIndex)
+
+          const { username, playerType, selectedPlayerIndex } = otherPlayers[id]
+          console.log('other player', { username, playerType, selectedPlayerIndex })
+          // { connectionId: { username, playerType, selectedPlayerIndex }
+          store.dispatch(addPlayer({ connectionId: id, username, playerType, selectedPlayerIndex }))
         }
       })
     })
@@ -88,7 +105,7 @@ export default class PlayerSelect extends Phaser.Scene {
       const startBtnW = 220
       const startBtnH = 50
 
-      new SimpleButton(
+      this.startBtn = new SimpleButton(
         this,
         startBtnX,
         startBtnY,
@@ -96,12 +113,18 @@ export default class PlayerSelect extends Phaser.Scene {
         startBtnH,
         'Start Game',
         { fontSize: '32px', fill: '#ffffff' },
-        () => this.startGame.bind(this)
+        this.startGame.bind(this)
       )
     })
 
     this.socket.on('otherPlayerSelected', (data) => {
       this.selectOtherPlayer(data.selectedPlayerIndex)
+
+      console.log('other player', data)
+      const { username, playerType, selectedPlayerIndex, connectionId } = data
+      console.log('other player', { username, playerType, selectedPlayerIndex })
+      // { connectionId: { username, playerType, selectedPlayerIndex }
+      store.dispatch(addPlayer({ connectionId, username, playerType, selectedPlayerIndex }))
     })
   }
 
@@ -111,10 +134,17 @@ export default class PlayerSelect extends Phaser.Scene {
     console.log(this.player)
     if (this.player == null) return
 
+    // console.table({ playerType: this.playerType, player: this.player })
     this.socket.emit('playerSelect', {
+      playerType: this.playerType,
       selectedPlayer: this.player,
+      gameSessionId: this.gameSessionId,
       connectionId: this.socket.connectionId,
     })
+
+    store.dispatch(setPlayerType(this.playerType))
+    store.dispatch(setPlayerIndex(this.player))
+
     this.confirmBtn.hide()
 
     // Changed the prompt to "Waiting for other player..."
@@ -128,13 +158,15 @@ export default class PlayerSelect extends Phaser.Scene {
     // this.scene.start('game')
   }
 
-  selectPlayer(index, color = 0x00ff00) {
+  selectPlayer(index, key) {
     const x = 80
+    const color = 0x00ff00
 
     if (!this.selected)
       this.selected = this.add.circle(x, this.getSelectedPosition(index), 10, color, 1)
     else this.selected.setPosition(x, this.getSelectedPosition(index))
 
+    this.playerType = key
     this.player = index
   }
 
@@ -154,6 +186,7 @@ export default class PlayerSelect extends Phaser.Scene {
   }
 
   startGame() {
-    this.scene.start('game')
+    console.log('start game')
+    this.scene.start(mainSceneConfig.key, { socket: this.socket })
   }
 }

@@ -21,17 +21,19 @@ import Bow from '../../entities/weapons/bow/Bow'
 // Multiplayer stuff
 // import socket from '../../connection/connect'
 // import EntitiesService from '../../service/entitiesStorage.service'
-import SocketConnection from '../../connection/connect'
+// import SocketConnection from '../../connection/connect'
+import socket from '../../connection/connect'
 import Enemy from '../../entities/enemies/Enemy'
+import mainSceneConfig from '../main/mainScene.config'
 // import InputHandler from '../../input/InputHandler'
 // import InputHandlerService from '../../service/inputHandler.service'
 
 export default class LoadScene extends Phaser.Scene {
   constructor() {
     super({ key: sceneKeys.LOAD })
-    const socketConn = new SocketConnection()
-    socketConn.connect()
-    this.socket = socketConn.getSocket()
+    // const socketConn = new SocketConnection()
+    // socketConn.connect()
+    // this.socket = socketConn.getSocket()
   }
 
   init() {
@@ -57,26 +59,26 @@ export default class LoadScene extends Phaser.Scene {
 
   preload() {
     // Using rexAwait to wait for the socket to connect before running the create method and starting the next scene
-    this.load.rexAwait((successCallback, failureCallback) => {
-      console.log('inside the rexAwait')
+    // this.load.rexAwait((successCallback, failureCallback) => {
+    //   console.log('inside the rexAwait')
 
-      new Promise((resolve, reject) => {
-        if (!this.socket) return reject()
+    //   new Promise((resolve, reject) => {
+    //     if (!this.socket) return reject()
 
-        this.socket.on('connect', () => {
-          console.log('connected to server')
-          resolve()
-        })
-      })
-        .then(() => {
-          console.log('connected')
-          successCallback()
-        })
-        .catch(() => {
-          console.log('not connected')
-          failureCallback()
-        })
-    })
+    //     this.socket.on('connect', () => {
+    //       console.log('connected to server')
+    //       resolve()
+    //     })
+    //   })
+    //     .then(() => {
+    //       console.log('connected')
+    //       successCallback()
+    //     })
+    //     .catch(() => {
+    //       console.log('not connected')
+    //       failureCallback()
+    //     })
+    // })
 
     console.log('after the rexAwait')
     // this.load.image('logo', logo)
@@ -91,7 +93,8 @@ export default class LoadScene extends Phaser.Scene {
     this.load.image('tiles', assets.mapTileset)
 
     // Load the map
-    this.load.tilemapTiledJSON('map', assets.mapJson)
+    console.log(mainSceneConfig)
+    this.load.tilemapTiledJSON(mainSceneConfig.tileMap.key, assets.mapJson)
 
     // Load player assets using Player.config
     this.load.atlas(Player.config.texture, Player.config.image, Player.config.atlas)
@@ -158,6 +161,6 @@ export default class LoadScene extends Phaser.Scene {
   }
 
   create() {
-    this.scene.start(menuSceneConfig.key, { socket: this.socket })
+    this.scene.start(menuSceneConfig.key, { socket })
   }
 }
